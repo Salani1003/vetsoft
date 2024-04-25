@@ -24,5 +24,7 @@ Aplicación web para veterinarias utilizada en la cursada 2024 de Ingeniería y 
 
 ## Integrantes
 
--Salani Pablo
--Moretti Francisco
+- Salani Pablo
+- Moretti Francisco
+- Luna Esteban
+- Zubik Tomas
