@@ -21,6 +21,27 @@ def validate_client(data):
 
     return errors
 
+def validate_pet(data):
+    errors = {}
+
+    name = data.get("name", "")
+    breed = data.get("breed", "")
+    birthday = data.get("birthday", "")
+    client = data.get("client", "") 
+
+    if not name:
+        errors["name"] = ("Por favor ingrese un nombre para la mascota.")
+
+    if not breed:
+        errors["breed"] = ("Por favor ingrese una raza para la mascota.")
+
+    if not birthday:
+        errors["birthday"] = ("Por favor ingrese una fecha de nacimiento para la mascota.")
+
+    if not client:
+        errors["client"] = ("Por favor seleccione un cliente para la mascota.")
+
+    return errors
 
 class Client(models.Model):
     name = models.CharField(max_length=100)
@@ -54,3 +75,36 @@ class Client(models.Model):
         self.address = client_data.get("address", "") or self.address
 
         self.save()
+
+class Pet(models.Model):
+        name = models.CharField(max_length=20)
+        breed = models.CharField(max_length=20)
+        birthday = models.DateField()
+        client = models.ForeignKey(Client, on_delete=models.CASCADE)
+
+        def __str__(self):
+            return self.name
+        
+        @classmethod
+        def save_pet(cls, pet_data):
+            errors = validate_pet(pet_data)
+
+            if len(errors.keys()) > 0:
+                return False, errors
+
+            Pet.objects.create(
+                name=pet_data.get("name"),
+                breed=pet_data.get("breed"),
+                birthday=pet_data.get("birthday"),
+                client_id=pet_data.get("client"),
+            )
+
+            return True, None
+        
+        def update_pet(self, pet_data):
+            self.name = pet_data.get("name", "") or self.name
+            self.breed = pet_data.get("breed", "") or self.breed
+            self.birthday = pet_data.get("birthday", "") or self.birthday
+            self.client_id = pet_data.get("client", "") or self.client
+
+            self.save()
