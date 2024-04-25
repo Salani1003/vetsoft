@@ -63,6 +63,25 @@ def validate_vet(data):
 
     return errors
 
+def validate_product(data):
+    errors = {}
+
+    name = data.get("name", "")
+    type = data.get("type", "")
+    price = data.get("price", "")
+
+    if not name:
+        errors["name"] = ("Por favor ingrese un nombre del producto.")
+
+    if not type:
+        errors["type"] = ("Por favor ingrese el tipo de producto.")
+
+    if not price:
+        errors["price"] = ("Por favor ingrese el precio del producto.")
+
+    return errors
+
+
 class Client(models.Model):
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=15)
@@ -158,3 +177,33 @@ class Vet(models.Model):
         self.phone = vet_data.get("phone", "") or self.phone
 
         self.save()
+
+class Product(models.Model):
+        name = models.CharField(max_length=20)
+        type = models.CharField(max_length=20)
+        price = models.DecimalField(max_digits=10, decimal_places=2)
+
+        def __str__(self):
+            return self.name
+        
+        @classmethod
+        def save_product(cls, product_data):
+            errors = validate_product(product_data)
+
+            if len(errors.keys()) > 0:
+                return False, errors
+
+            Product.objects.create(
+                name=product_data.get("name"),
+                type=product_data.get("type"),
+                price=product_data.get("price"),
+            )
+
+            return True, None
+        
+        def update_product(self, product_data):
+            self.name = product_data.get("name", "") or self.name
+            self.type = product_data.get("type", "") or self.type
+            self.price = product_data.get("price", "") or self.price
+
+            self.save()
