@@ -21,27 +21,31 @@ def validate_client(data):
 
     return errors
 
+
 def validate_pet(data):
     errors = {}
 
     name = data.get("name", "")
     breed = data.get("breed", "")
     birthday = data.get("birthday", "")
-    client = data.get("client", "") 
+    client = data.get("client", "")
 
     if not name:
-        errors["name"] = ("Por favor ingrese un nombre para la mascota.")
+        errors["name"] = "Por favor ingrese un nombre para la mascota."
 
     if not breed:
-        errors["breed"] = ("Por favor ingrese una raza para la mascota.")
+        errors["breed"] = "Por favor ingrese una raza para la mascota."
 
     if not birthday:
-        errors["birthday"] = ("Por favor ingrese una fecha de nacimiento para la mascota.")
+        errors["birthday"] = (
+            "Por favor ingrese una fecha de nacimiento para la mascota."
+        )
 
     if not client:
-        errors["client"] = ("Por favor seleccione un cliente para la mascota.")
+        errors["client"] = "Por favor seleccione un cliente para la mascota."
 
     return errors
+
 
 def validate_vet(data):
     errors = {}
@@ -63,6 +67,24 @@ def validate_vet(data):
 
     return errors
 
+
+def validate_provider(data):
+    errors = {}
+
+    name = data.get("name", "")
+    email = data.get("email", "")
+
+    if name == "":
+        errors["name"] = "Por favor ingrese un nombre"
+
+    if email == "":
+        errors["email"] = "Por favor ingrese un email"
+    elif email.count("@") == 0:
+        errors["email"] = "Por favor ingrese un email valido"
+
+    return errors
+
+
 def validate_product(data):
     errors = {}
 
@@ -71,13 +93,13 @@ def validate_product(data):
     price = data.get("price", "")
 
     if not name:
-        errors["name"] = ("Por favor ingrese un nombre del producto.")
+        errors["name"] = "Por favor ingrese un nombre del producto."
 
     if not type:
-        errors["type"] = ("Por favor ingrese el tipo de producto.")
+        errors["type"] = "Por favor ingrese el tipo de producto."
 
     if not price:
-        errors["price"] = ("Por favor ingrese el precio del producto.")
+        errors["price"] = "Por favor ingrese el precio del producto."
 
     return errors
 
@@ -115,38 +137,40 @@ class Client(models.Model):
 
         self.save()
 
+
 class Pet(models.Model):
-        name = models.CharField(max_length=20)
-        breed = models.CharField(max_length=20)
-        birthday = models.DateField()
-        client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    name = models.CharField(max_length=20)
+    breed = models.CharField(max_length=20)
+    birthday = models.DateField()
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
 
-        def __str__(self):
-            return self.name
-        
-        @classmethod
-        def save_pet(cls, pet_data):
-            errors = validate_pet(pet_data)
+    def __str__(self):
+        return self.name
 
-            if len(errors.keys()) > 0:
-                return False, errors
+    @classmethod
+    def save_pet(cls, pet_data):
+        errors = validate_pet(pet_data)
 
-            Pet.objects.create(
-                name=pet_data.get("name"),
-                breed=pet_data.get("breed"),
-                birthday=pet_data.get("birthday"),
-                client_id=pet_data.get("client"),
-            )
+        if len(errors.keys()) > 0:
+            return False, errors
 
-            return True, None
-        
-        def update_pet(self, pet_data):
-            self.name = pet_data.get("name", "") or self.name
-            self.breed = pet_data.get("breed", "") or self.breed
-            self.birthday = pet_data.get("birthday", "") or self.birthday
-            self.client_id = pet_data.get("client", "") or self.client
+        Pet.objects.create(
+            name=pet_data.get("name"),
+            breed=pet_data.get("breed"),
+            birthday=pet_data.get("birthday"),
+            client_id=pet_data.get("client"),
+        )
 
-            self.save()
+        return True, None
+
+    def update_pet(self, pet_data):
+        self.name = pet_data.get("name", "") or self.name
+        self.breed = pet_data.get("breed", "") or self.breed
+        self.birthday = pet_data.get("birthday", "") or self.birthday
+        self.client_id = pet_data.get("client", "") or self.client
+
+        self.save()
+
 
 class Vet(models.Model):
     name = models.CharField(max_length=100)
@@ -178,32 +202,61 @@ class Vet(models.Model):
 
         self.save()
 
+
+class Provider(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def save_provider(cls, provider_data):
+        errors = validate_provider(provider_data)
+
+        if len(errors.keys()) > 0:
+            return False, errors
+
+        Provider.objects.create(
+            name=provider_data.get("name"),
+            email=provider_data.get("email"),
+        )
+
+        return True, None
+
+    def update_provider(self, provider_data):
+        self.name = provider_data.get("name", "") or self.name
+        self.email = provider_data.get("email", "") or self.email
+
+        self.save()
+
+
 class Product(models.Model):
-        name = models.CharField(max_length=20)
-        type = models.CharField(max_length=20)
-        price = models.DecimalField(max_digits=10, decimal_places=2)
+    name = models.CharField(max_length=20)
+    type = models.CharField(max_length=20)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
 
-        def __str__(self):
-            return self.name
-        
-        @classmethod
-        def save_product(cls, product_data):
-            errors = validate_product(product_data)
+    def __str__(self):
+        return self.name
 
-            if len(errors.keys()) > 0:
-                return False, errors
+    @classmethod
+    def save_product(cls, product_data):
+        errors = validate_product(product_data)
 
-            Product.objects.create(
-                name=product_data.get("name"),
-                type=product_data.get("type"),
-                price=product_data.get("price"),
-            )
+        if len(errors.keys()) > 0:
+            return False, errors
 
-            return True, None
-        
-        def update_product(self, product_data):
-            self.name = product_data.get("name", "") or self.name
-            self.type = product_data.get("type", "") or self.type
-            self.price = product_data.get("price", "") or self.price
+        Product.objects.create(
+            name=product_data.get("name"),
+            type=product_data.get("type"),
+            price=product_data.get("price"),
+        )
 
-            self.save()
+        return True, None
+
+    def update_product(self, product_data):
+        self.name = product_data.get("name", "") or self.name
+        self.type = product_data.get("type", "") or self.type
+        self.price = product_data.get("price", "") or self.price
+
+        self.save()
