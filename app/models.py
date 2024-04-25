@@ -21,27 +21,31 @@ def validate_client(data):
 
     return errors
 
+
 def validate_pet(data):
     errors = {}
 
     name = data.get("name", "")
     breed = data.get("breed", "")
     birthday = data.get("birthday", "")
-    client = data.get("client", "") 
+    client = data.get("client", "")
 
     if not name:
-        errors["name"] = ("Por favor ingrese un nombre para la mascota.")
+        errors["name"] = "Por favor ingrese un nombre para la mascota."
 
     if not breed:
-        errors["breed"] = ("Por favor ingrese una raza para la mascota.")
+        errors["breed"] = "Por favor ingrese una raza para la mascota."
 
     if not birthday:
-        errors["birthday"] = ("Por favor ingrese una fecha de nacimiento para la mascota.")
+        errors["birthday"] = (
+            "Por favor ingrese una fecha de nacimiento para la mascota."
+        )
 
     if not client:
-        errors["client"] = ("Por favor seleccione un cliente para la mascota.")
+        errors["client"] = "Por favor seleccione un cliente para la mascota."
 
     return errors
+
 
 def validate_vet(data):
     errors = {}
@@ -62,6 +66,24 @@ def validate_vet(data):
         errors["email"] = "Por favor ingrese un email valido"
 
     return errors
+
+
+def validate_provider(data):
+    errors = {}
+
+    name = data.get("name", "")
+    email = data.get("email", "")
+
+    if name == "":
+        errors["name"] = "Por favor ingrese un nombre"
+
+    if email == "":
+        errors["email"] = "Por favor ingrese un email"
+    elif email.count("@") == 0:
+        errors["email"] = "Por favor ingrese un email valido"
+
+    return errors
+
 
 class Client(models.Model):
     name = models.CharField(max_length=100)
@@ -96,38 +118,40 @@ class Client(models.Model):
 
         self.save()
 
+
 class Pet(models.Model):
-        name = models.CharField(max_length=20)
-        breed = models.CharField(max_length=20)
-        birthday = models.DateField()
-        client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    name = models.CharField(max_length=20)
+    breed = models.CharField(max_length=20)
+    birthday = models.DateField()
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
 
-        def __str__(self):
-            return self.name
-        
-        @classmethod
-        def save_pet(cls, pet_data):
-            errors = validate_pet(pet_data)
+    def __str__(self):
+        return self.name
 
-            if len(errors.keys()) > 0:
-                return False, errors
+    @classmethod
+    def save_pet(cls, pet_data):
+        errors = validate_pet(pet_data)
 
-            Pet.objects.create(
-                name=pet_data.get("name"),
-                breed=pet_data.get("breed"),
-                birthday=pet_data.get("birthday"),
-                client_id=pet_data.get("client"),
-            )
+        if len(errors.keys()) > 0:
+            return False, errors
 
-            return True, None
-        
-        def update_pet(self, pet_data):
-            self.name = pet_data.get("name", "") or self.name
-            self.breed = pet_data.get("breed", "") or self.breed
-            self.birthday = pet_data.get("birthday", "") or self.birthday
-            self.client_id = pet_data.get("client", "") or self.client
+        Pet.objects.create(
+            name=pet_data.get("name"),
+            breed=pet_data.get("breed"),
+            birthday=pet_data.get("birthday"),
+            client_id=pet_data.get("client"),
+        )
 
-            self.save()
+        return True, None
+
+    def update_pet(self, pet_data):
+        self.name = pet_data.get("name", "") or self.name
+        self.breed = pet_data.get("breed", "") or self.breed
+        self.birthday = pet_data.get("birthday", "") or self.birthday
+        self.client_id = pet_data.get("client", "") or self.client
+
+        self.save()
+
 
 class Vet(models.Model):
     name = models.CharField(max_length=100)
@@ -156,5 +180,33 @@ class Vet(models.Model):
         self.name = vet_data.get("name", "") or self.name
         self.email = vet_data.get("email", "") or self.email
         self.phone = vet_data.get("phone", "") or self.phone
+
+        self.save()
+
+
+class Provider(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def save_provider(cls, provider_data):
+        errors = validate_provider(provider_data)
+
+        if len(errors.keys()) > 0:
+            return False, errors
+
+        Provider.objects.create(
+            name=provider_data.get("name"),
+            email=provider_data.get("email"),
+        )
+
+        return True, None
+
+    def update_provider(self, provider_data):
+        self.name = provider_data.get("name", "") or self.name
+        self.email = provider_data.get("email", "") or self.email
 
         self.save()
