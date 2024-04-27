@@ -1,6 +1,5 @@
-from django.shortcuts import get_object_or_404, redirect, render, reverse
-
-from .models import Client, Pet, Product, Provider, Vet
+from django.shortcuts import get_object_or_404, redirect, render, reverse 
+from .models import Client, Pet, Product, Provider, Vet, Appointment
 
 
 def home(request):
@@ -197,3 +196,40 @@ def products_delete(request):
     product.delete()
 
     return redirect(reverse("products_repo"))
+
+def appointments_repository(request):
+    appointments = Appointment.objects.all()
+    return render(request, "appointments/repository.html", {"appointments": appointments})
+
+def appointments_form(request, id=None):
+    pets = Pet.objects.all()
+    vets = Vet.objects.all()
+    if request.method == "POST":
+        appointment_id = request.POST.get("id", "")
+        errors = {}
+        saved = True
+
+        if appointment_id == "":
+            saved, errors = Appointment.save_appointment(request.POST)
+        else:
+            appointment = get_object_or_404(Appointment, pk=appointment_id)
+            appointment.update_appointment(request.POST)
+
+        if saved:
+            return redirect(reverse("appointments_repo"))
+
+        return render(
+            request, "appointments/form.html", {"errors": errors, "appointment": request.POST}
+        )
+    appointment = None
+    if id is not None:
+        appointment = get_object_or_404(Appointment, pk=id)
+    return render(request, "appointments/form.html", {"appointment": appointment, "pets": pets, "vets": vets})
+
+def appointments_delete(request):
+    appointment_id = request.POST.get("appointment_id")
+    appointment = get_object_or_404(Appointment, pk=int(appointment_id))
+    appointment.delete()
+
+    return redirect(reverse("appointments_repo"))
+
