@@ -283,7 +283,7 @@ class Product(models.Model):
 
         self.save()
 
-class appointment(models.Model):
+class Appointment(models.Model):
     pet = models.ForeignKey(Pet, on_delete=models.CASCADE)
     vet = models.ForeignKey(Vet, on_delete=models.CASCADE)
     date = models.DateField()
@@ -299,7 +299,7 @@ class appointment(models.Model):
         if len(errors.keys()) > 0:
             return False, errors
 
-        appointment.objects.create(
+        Appointment.objects.create(
             pet_id=appointment_data.get("pet"),
             vet_id=appointment_data.get("vet"),
             date=appointment_data.get("date"),
