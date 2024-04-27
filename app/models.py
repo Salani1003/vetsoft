@@ -103,6 +103,28 @@ def validate_product(data):
 
     return errors
 
+def validate_appointment(data):
+    errors = {}
+
+    pet = data.get("pet", "")
+    vet = data.get("vet", "")
+    date = data.get("date", "")
+    time = data.get("time", "")
+
+    if not pet:
+        errors["pet"] = "Por favor seleccione una mascota."
+
+    if not vet:
+        errors["vet"] = "Por favor seleccione un veterinario."
+        
+    if not date:
+        errors["date"] = "Por favor seleccione una fecha."
+
+    if not time:
+        errors["time"] = "Por favor seleccione una hora."
+        
+    return errors
+
 
 class Client(models.Model):
     name = models.CharField(max_length=100)
@@ -258,5 +280,38 @@ class Product(models.Model):
         self.name = product_data.get("name", "") or self.name
         self.type = product_data.get("type", "") or self.type
         self.price = product_data.get("price", "") or self.price
+
+        self.save()
+
+class appointment(models.Model):
+    pet = models.ForeignKey(Pet, on_delete=models.CASCADE)
+    vet = models.ForeignKey(Vet, on_delete=models.CASCADE)
+    date = models.DateField()
+    time = models.TimeField()
+
+    def __str__(self):
+        return self.pet.name
+
+    @classmethod
+    def save_appointment(cls, appointment_data):
+        errors = validate_appointment(appointment_data)
+
+        if len(errors.keys()) > 0:
+            return False, errors
+
+        appointment.objects.create(
+            pet_id=appointment_data.get("pet"),
+            vet_id=appointment_data.get("vet"),
+            date=appointment_data.get("date"),
+            time=appointment_data.get("time"),
+        )
+
+        return True, None
+
+    def update_appointment(self, appointment_data):
+        self.pet_id = appointment_data.get("pet", "") or self.pet
+        self.vet_id = appointment_data.get("vet", "") or self.vet
+        self.date = appointment_data.get("date", "") or self.date
+        self.time = appointment_data.get("time", "") or self.time
 
         self.save()
