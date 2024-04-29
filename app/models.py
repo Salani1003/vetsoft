@@ -125,6 +125,23 @@ def validate_appointment(data):
         
     return errors
 
+def validate_medicine(data):
+    errors = {}
+
+    name = data.get("name", "")
+    description = data.get("description", "")
+    dose = data.get("dose", "")
+
+    if not name:
+        errors["name"] = "Por favor ingrese un nombre del medicamento."
+
+    if not description:
+        errors["description"] = "Por favor ingrese la descripción del medicamento."
+
+    if not dose:
+        errors["dose"] = "Por favor ingrese la dosis del medicamento."
+
+    return errors
 
 class Client(models.Model):
     name = models.CharField(max_length=100)
@@ -315,3 +332,35 @@ class Appointment(models.Model):
         self.time = appointment_data.get("time", "") or self.time
 
         self.save()
+        
+class Medicine(models.Model):
+    name = models.CharField(max_length=20)
+    description = models.CharField(max_length=100)
+    dose = models.CharField(max_length=20)
+    
+    def __str__(self):
+        return self.name
+    
+    @classmethod
+    def save_medicine(cls, medicine_data):
+        errors = validate_medicine(medicine_data)
+
+        if len(errors.keys()) > 0:
+            return False, errors
+
+        Medicine.objects.create(
+            name=medicine_data.get("name"),
+            description=medicine_data.get("description"),
+            dose=medicine_data.get("dose"),
+        )
+
+        return True, None
+    
+    def update_medicine(self, medicine_data):
+        self.name = medicine_data.get("name", "") or self.name
+        self.description = medicine_data.get("description", "") or self.description
+        self.dose = medicine_data.get("dose", "") or self.dose
+
+        self.save()
+        
+    
