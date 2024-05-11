@@ -10,6 +10,8 @@ Aplicación web para veterinarias utilizada en la cursada 2024 de Ingeniería y 
 -   playwright
 -   ruff
 
+Version actual de la imagen: 1.0
+
 ## Instalar dependencias
 
 `pip install -r requirements.txt`
@@ -28,3 +30,9 @@ Aplicación web para veterinarias utilizada en la cursada 2024 de Ingeniería y 
 - Moretti Francisco
 - Luna Esteban
 - Zubik Tomas
+
+## Correr con Docker
+
+`docker-compose up --build`
+
+Para acceder, abrir el navegador y buscar `localhost:8000`

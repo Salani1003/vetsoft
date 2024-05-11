@@ -1,7 +1,7 @@
 services:
 
-  app:
-    image: app
+  vetsoft-app:
+    image: vetsoft-app:1.0
     build:
       context: .
       dockerfile: Dockerfile
@@ -9,6 +9,6 @@ services:
       - "8000:8000"
     environment:
       - DEBUG=False
-      - TIME_ZONE=True
+      - TIME_ZONE=UTC
 
 
