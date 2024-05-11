@@ -15,5 +15,9 @@ COPY /app/ /src/app/
 COPY /vetsoft/ /src/vetsoft/
 COPY manage.py /src/
 
+
+# Run migrations when creating the container
+RUN python manage.py migrate
+
 # Run the application
 CMD python manage.py runserver 0.0.0.0:8000
