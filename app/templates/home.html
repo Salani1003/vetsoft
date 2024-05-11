@@ -43,6 +43,25 @@
         </div>
         <div class="col-3">
             <a
+                href="{% url 'medicines_repo' %}"
+                class="text-decoration-none"
+                data-testid="home-Medicinas"
+            >
+                <div class="card" style="min-height: 20vh">
+                    <div class="card-body d-flex align-items-center">
+                        <h2
+                            class="card-title d-flex justify-content-between w-100"
+                        >
+                            <i class="bi bi-capsule"></i>
+                            <div>Medicinas</div>
+                            <i class="bi bi-arrow-right"></i>
+                        </h2>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-3">
+            <a
                 href="{% url 'vets_repo' %}"
                 class="text-decoration-none"
                 data-testid="home-Veterinarios"
@@ -60,7 +79,7 @@
                 </div>
             </a>
         </div>
-        <div class="col-3">
+        <div class="col-3 mt-2">
             <a
                 href="{% url 'products_repo' %}"
                 class="text-decoration-none"
@@ -79,8 +98,8 @@
                 </div>
             </a>
         </div>
-        </div>
-        <div class="col-3">
+
+        <div class="col-3 mt-2">
             <a
                 href="{% url 'providers_repo' %}"
                 class="text-decoration-none"
@@ -98,5 +117,26 @@
                     </div>
                 </div>
             </a>
+        </div>
+        <div class="col-3 mt-2">
+            <a
+                href="{% url 'appointments_repo' %}"
+                class="text-decoration-none"
+                data-testid="home-Appointments"
+            >
+                <div class="card" style="min-height: 20vh">
+                    <div class="card-body d-flex align-items-center">
+                        <h2
+                            class="card-title d-flex justify-content-between w-100"
+                        >
+                            <i class="bi bi-calendar"></i>
+                            <div>Citas</div>
+                            <i class="bi bi-arrow-right"></i>
+                        </h2>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    {% endblock %}
 </div>
-{% endblock %}

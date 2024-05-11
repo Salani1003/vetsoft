@@ -12,6 +12,12 @@ urlpatterns = [
     path("mascotas/nuevo/", view=views.pets_form, name="pets_form"),
     path("mascotas/editar/<int:id>/", view=views.pets_form, name="pets_edit"),
     path("mascotas/eliminar/", view=views.pets_delete, name="pets_delete"),
+    path("medicamentos/", view=views.medicines_repository, name="medicines_repo"),
+    path("medicamentos/nuevo/", view=views.medicines_form, name="medicines_form"),
+    path(
+        "medicamentos/editar/<int:id>/", view=views.medicines_form, name="medicines_edit"
+    ),
+    path("medicamentos/eliminar/", view=views.medicines_delete, name="medicines_delete"),
     path("veterinarios/", view=views.vets_repository, name="vets_repo"),
     path("veterinarios/nuevo/", view=views.vets_form, name="vets_form"),
     path("veterinarios/editar/<int:id>/", view=views.vets_form, name="vets_edit"),
@@ -26,4 +32,10 @@ urlpatterns = [
     path("productos/nuevo/", view=views.products_form, name="products_form"),
     path("productos/editar/<int:id>/", view=views.products_form, name="products_edit"),
     path("productos/eliminar/", view=views.products_delete, name="products_delete"),
+    path("citas/", view=views.appointments_repository, name="appointments_repo"),
+    path("citas/nuevo/", view=views.appointments_form, name="appointments_form"),
+    path(
+        "citas/editar/<int:id>/", view=views.appointments_form, name="appointments_edit"
+    ),
+    path("citas/eliminar/", view=views.appointments_delete, name="appointments_delete"),
 ]
