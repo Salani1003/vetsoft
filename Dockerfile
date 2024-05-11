@@ -1,5 +1,5 @@
 # Base Image
-FROM python3.11
+FROM python:3.11.9
 
 # Set the working directory
 WORKDIR /src
