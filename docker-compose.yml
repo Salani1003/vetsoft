@@ -1,0 +1,14 @@
+services:
+
+app:
+  image: app
+  build:
+    context: .
+    dockerfile: Dockerfile
+  ports:
+    - "8000:8000"
+  environment:
+    - DEBUG=False
+    - TIME_ZONE=True
+
+
