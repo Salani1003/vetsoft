@@ -9,7 +9,7 @@ COPY requirements.txt .
 
 # Install dependencies
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install --no-cache-dir -r requirements.txt
+    pip install -r requirements.txt
 
 # Copy the application
 COPY /app/ /src/app/
@@ -21,4 +21,4 @@ COPY manage.py /src/
 RUN python manage.py migrate
 
 # Run the application
-CMD python manage.py runserver 0.0.0.0:8000
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
