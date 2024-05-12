@@ -10,7 +10,7 @@ Aplicación web para veterinarias utilizada en la cursada 2024 de Ingeniería y 
 -   playwright
 -   ruff
 
-Version actual de la imagen: 1.0
+Version actual de la imagen: 1.1
 
 ## Instalar dependencias
 

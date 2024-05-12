@@ -1,7 +1,7 @@
 services:
 
   vetsoft-app:
-    image: vetsoft-app:1.0
+    image: vetsoft-app:1.1
     build:
       context: .
       dockerfile: Dockerfile
