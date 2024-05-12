@@ -1,5 +1,5 @@
 # Base Image
-FROM python:3.11.9@sha256:e453eb723bc8ecac7a797498f9a5915d13e567620d48dcd3568750bac3b59f31
+FROM python:3.11.9-slim@sha256:6d2502238109c929569ae99355e28890c438cb11bc88ef02cd189c173b3db07c
 
 # Set the working directory
 WORKDIR /src
@@ -8,7 +8,8 @@ WORKDIR /src
 COPY requirements.txt .
 
 # Install dependencies
-RUN pip install -r requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy the application
 COPY /app/ /src/app/
