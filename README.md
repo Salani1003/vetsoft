@@ -33,6 +33,6 @@ Version actual de la imagen: 1.1
 
 ## Correr con Docker
 
-`docker-compose up --build`
+`docker compose -f "docker-compose.yml" up -d --build`
 
 Para acceder, abrir el navegador y buscar `localhost:8000`
