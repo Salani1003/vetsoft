@@ -7,7 +7,7 @@ links = [
     {"label": "Mascotas", "href": reverse("pets_repo"), "icon": "bi bi-paw"},
     {"label": "Veterinarios", "href": reverse("vets_repo"), "icon": "bi bi-person"},
     {"label": "Citas", "href": reverse("appointments_repo"), "icon": "bi bi-calendar"},
-    {"label": "Medicamentos", "href": reverse("medicines_repo"), "icon": "bi bi-pill"},
+    {"label": "Medicamentos", "href": reverse("medicines_repo"), "icon": "bi bi-capsule"},
     {"label": "Proveedores", "href": reverse("providers_repo"), "icon": "bi bi-truck"},
 ]
 
