@@ -1,5 +1,6 @@
 from django.test import TestCase
 from app.models import Client
+from app.models import Product
 
 
 class ClientModelTest(TestCase):
@@ -57,3 +58,49 @@ class ClientModelTest(TestCase):
         client_updated = Client.objects.get(pk=1)
 
         self.assertEqual(client_updated.phone, "221555232")
+
+
+class ProductModelTest(TestCase):
+    def test_can_create_product(self):
+        request = Product.save_product(
+            {
+                "name": "Pelota",
+                "type": "Juguete",
+                "price": str(33),
+            }
+        )
+
+        self.assertEqual(request, (True, None))
+        
+    def test_cannot_create_product_with_price_0(self):
+        request = Product.save_product(
+            {
+                "name": "Pelota",
+                "type": "Juguete",
+                "price": str(0),
+            }
+        )
+
+        self.assertEqual(request, (False, {"price": "Por favor ingrese un precio mayor a 0."}))
+    
+    def test_cannot_create_product_with_price_negative(self):
+        request = Product.save_product(
+            {
+                "name": "Pelota",
+                "type": "Juguete",
+                "price": str(-33),
+            }
+        )
+
+        self.assertEqual(request, (False, {"price": "Por favor ingrese un precio mayor a 0."}))
+    
+    def test_can_create_product_without_price(self):
+        request = Product.save_product(
+            {
+                "name": "Pelota",
+                "type": "Juguete",
+                "price": "",
+            }
+        )
+
+        self.assertEqual(request, (False, {"price": "Por favor ingrese el precio del producto."}))
