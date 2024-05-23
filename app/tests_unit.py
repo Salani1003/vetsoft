@@ -1,5 +1,8 @@
+from datetime import datetime, timedelta
+
 from django.test import TestCase
-from app.models import Client
+
+from app.models import Client, Pet
 
 
 class ClientModelTest(TestCase):
@@ -57,3 +60,44 @@ class ClientModelTest(TestCase):
         client_updated = Client.objects.get(pk=1)
 
         self.assertEqual(client_updated.phone, "221555232")
+
+
+class PetModelTest(TestCase):
+    def test_cant_create_pet_with_birthday_today(self):
+        Client.save_client(
+            {
+                "name": "Juan Sebastian Veron",
+                "phone": "221555232",
+                "address": "13 y 44",
+                "email": "brujita75@hotmail.com",
+            }
+        )
+        _, errors = Pet.save_pet(
+            {
+                "name": "Rex",
+                "breed": "Labrador",
+                "birthday": datetime.now().date(),
+                "client": 1,
+            }
+        )
+        self.assertIn("invalid_birthday", errors)
+
+    def test_can_create_pet(self):
+        Client.save_client(
+            {
+                "name": "Juan Sebastian Veron",
+                "phone": "221555232",
+                "address": "13 y 44",
+                "email": "brujita75@hotmail.com",
+            }
+        )
+        is_success, errors = Pet.save_pet(
+            {
+                "name": "Rex",
+                "breed": "Labrador",
+                "birthday": datetime.now().date() - timedelta(days=1),
+                "client": 1,
+            }
+        )
+        print(errors)
+        self.assertTrue(is_success)
