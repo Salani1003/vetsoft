@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 
 
@@ -43,6 +45,11 @@ def validate_pet(data):
 
     if not client:
         errors["client"] = "Por favor seleccione un cliente para la mascota."
+    today = datetime.now().date()
+    if isinstance(birthday, str):
+        birthday = datetime.fromisoformat(birthday).date()
+    if birthday == today:
+        errors["invalid_birthday"] = "Por favor ingrese una fecha de nacimiento valida."
 
     return errors
 
@@ -103,6 +110,7 @@ def validate_product(data):
 
     return errors
 
+
 def validate_appointment(data):
     errors = {}
 
@@ -116,14 +124,15 @@ def validate_appointment(data):
 
     if not vet:
         errors["vet"] = "Por favor seleccione un veterinario."
-        
+
     if not date:
         errors["date"] = "Por favor seleccione una fecha."
 
     if not time:
         errors["time"] = "Por favor seleccione una hora."
-        
+
     return errors
+
 
 def validate_medicine(data):
     errors = {}
@@ -142,6 +151,7 @@ def validate_medicine(data):
         errors["dose"] = "Por favor ingrese la dosis del medicamento."
 
     return errors
+
 
 class Client(models.Model):
     name = models.CharField(max_length=100)
@@ -300,6 +310,7 @@ class Product(models.Model):
 
         self.save()
 
+
 class Appointment(models.Model):
     pet = models.ForeignKey(Pet, on_delete=models.CASCADE)
     vet = models.ForeignKey(Vet, on_delete=models.CASCADE)
@@ -332,15 +343,16 @@ class Appointment(models.Model):
         self.time = appointment_data.get("time", "") or self.time
 
         self.save()
-        
+
+
 class Medicine(models.Model):
     name = models.CharField(max_length=20)
     description = models.CharField(max_length=100)
     dose = models.CharField(max_length=20)
-    
+
     def __str__(self):
         return self.name
-    
+
     @classmethod
     def save_medicine(cls, medicine_data):
         errors = validate_medicine(medicine_data)
@@ -355,12 +367,10 @@ class Medicine(models.Model):
         )
 
         return True, None
-    
+
     def update_medicine(self, medicine_data):
         self.name = medicine_data.get("name", "") or self.name
         self.description = medicine_data.get("description", "") or self.description
         self.dose = medicine_data.get("dose", "") or self.dose
 
         self.save()
-        
-    
