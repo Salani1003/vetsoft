@@ -62,7 +62,7 @@ class ClientModelTest(TestCase):
 
 class ProductModelTest(TestCase):
     def test_can_create_product(self):
-        request = Product.save_product(
+        result = Product.save_product(
             {
                 "name": "Pelota",
                 "type": "Juguete",
@@ -70,10 +70,10 @@ class ProductModelTest(TestCase):
             }
         )
 
-        self.assertEqual(request, (True, None))
-        
+        self.assertEqual(result, (True, None))
+
     def test_cannot_create_product_with_price_0(self):
-        request = Product.save_product(
+        result = Product.save_product(
             {
                 "name": "Pelota",
                 "type": "Juguete",
@@ -81,10 +81,10 @@ class ProductModelTest(TestCase):
             }
         )
 
-        self.assertEqual(request, (False, {"price": "Por favor ingrese un precio mayor a 0."}))
+        self.assertEqual(result, (False, {"price": "Por favor ingrese un precio mayor a 0."}))
     
     def test_cannot_create_product_with_price_negative(self):
-        request = Product.save_product(
+        result = Product.save_product(
             {
                 "name": "Pelota",
                 "type": "Juguete",
@@ -92,10 +92,10 @@ class ProductModelTest(TestCase):
             }
         )
 
-        self.assertEqual(request, (False, {"price": "Por favor ingrese un precio mayor a 0."}))
+        self.assertEqual(result, (False, {"price": "Por favor ingrese un precio mayor a 0."}))
     
     def test_can_create_product_without_price(self):
-        request = Product.save_product(
+        result = Product.save_product(
             {
                 "name": "Pelota",
                 "type": "Juguete",
@@ -103,4 +103,4 @@ class ProductModelTest(TestCase):
             }
         )
 
-        self.assertEqual(request, (False, {"price": "Por favor ingrese el precio del producto."}))
+        self.assertEqual(result, (False, {"price": "Por favor ingrese el precio del producto."}))
