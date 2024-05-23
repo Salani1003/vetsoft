@@ -45,8 +45,9 @@ def validate_pet(data):
 
     if not client:
         errors["client"] = "Por favor seleccione un cliente para la mascota."
+
     today = datetime.now().date()
-    if isinstance(birthday, str):
+    if isinstance(birthday, str) and birthday != "":
         birthday = datetime.fromisoformat(birthday).date()
     if birthday == today:
         errors["invalid_birthday"] = "Por favor ingrese una fecha de nacimiento valida."
