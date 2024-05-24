@@ -64,6 +64,11 @@
                             {{ errors.birthday }}
                         </div>
                     {% endif %}
+                    {% if errors.invalid_birthday %}
+                        <div class="invalid-feedback">
+                            {{ errors.invalid_birthday }}
+                        </div>
+                    {% endif %}
                 </div>
                 <div>
                     <label for="client" class="form-label">Dueño</label>

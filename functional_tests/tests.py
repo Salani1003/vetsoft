@@ -1,9 +1,9 @@
 import os
+from datetime import datetime
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from playwright.sync_api import sync_playwright, expect, Browser
-
 from django.urls import reverse
+from playwright.sync_api import Browser, expect, sync_playwright
 
 from app.models import Client
 
@@ -243,6 +243,7 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
             "href", reverse("clients_edit", kwargs={"id": client.id})
         )
 
+
 class ProductCreateEditTestCase(PlaywrightTestCase):
     def test_should_not_be_able_to_create_a_product_with_negative_or_zero_price(self):
         self.page.goto(f"{self.live_server_url}{reverse('products_form')}")
@@ -255,10 +256,50 @@ class ProductCreateEditTestCase(PlaywrightTestCase):
 
         self.page.get_by_role("button", name="Guardar").click()
 
-        expect(self.page.get_by_text("Por favor ingrese un precio mayor a 0.")).to_be_visible()
+        expect(
+            self.page.get_by_text("Por favor ingrese un precio mayor a 0.")
+        ).to_be_visible()
 
         self.page.get_by_label("Precio").fill("-10")
 
         self.page.get_by_role("button", name="Guardar").click()
-        
-        expect(self.page.get_by_text("Por favor ingrese un precio mayor a 0.")).to_be_visible()
+
+        expect(
+            self.page.get_by_text("Por favor ingrese un precio mayor a 0.")
+        ).to_be_visible()
+
+
+class PetCreateEditTestCase(PlaywrightTestCase):
+    def test_should_not_be_able_to_create_pet_with_birthday_today(self):
+        self.page.goto(f"{self.live_server_url}{reverse('pets_form')}")
+
+        expect(self.page.get_by_role("form")).to_be_visible()
+        self.page.get_by_label("Nombre").click()
+        self.page.get_by_label("Nombre").fill("pocchi")
+        self.page.get_by_label("Raza").click()
+        self.page.get_by_label("Raza").fill("shiba")
+        self.page.get_by_label("Fecha de nacimiento").fill(str(datetime.today().date()))
+        self.page.get_by_role("button", name="Guardar").click()
+        expect(self.page.get_by_text("Por favor ingrese una fecha")).to_be_visible()
+
+    def test_should_be_able_to_create_a_new_pet(self):
+        Client.save_client(
+            {
+                "name": "duenio 1",
+                "phone": "221555232",
+                "address": "13 y 44",
+                "email": "email@hotmail.com",
+            }
+        )
+        self.page.goto(f"{self.live_server_url}{reverse('pets_form')}")
+
+        expect(self.page.get_by_role("form")).to_be_visible()
+
+        self.page.get_by_label("Nombre").fill("Pocchi")
+        self.page.get_by_label("Raza").fill("Shiba")
+        self.page.get_by_label("Fecha de nacimiento").fill("2021-01-01")
+        self.page.get_by_label("Dueño").select_option(label="duenio 1")
+        self.page.get_by_role("button", name="Guardar").click()
+
+        expect(self.page.locator("tbody")).to_contain_text("Pocchi")
+        expect(self.page.locator("tbody")).to_contain_text("Shiba")
