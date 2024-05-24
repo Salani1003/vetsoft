@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.shortcuts import reverse
-from app.models import Client
+from app.models import Client, Medicine
 
 
 class HomePageTest(TestCase):
@@ -93,3 +93,84 @@ class ClientsTest(TestCase):
         self.assertEqual(editedClient.phone, client.phone)
         self.assertEqual(editedClient.address, client.address)
         self.assertEqual(editedClient.email, client.email)
+
+class MedicineTest(TestCase):
+    def test_repo_use_repo_template(self):
+        response = self.client.get(reverse("medicines_repo"))
+        self.assertTemplateUsed(response, "medicines/repository.html")
+
+    def test_repo_display_all_medicines(self):
+        response = self.client.get(reverse("medicines_repo"))
+        self.assertTemplateUsed(response, "medicines/repository.html")
+
+    def test_form_use_form_template(self):
+        response = self.client.get(reverse("medicines_form"))
+        self.assertTemplateUsed(response, "medicines/form.html")
+
+    def test_can_create_medicine(self):
+        response = self.client.post(
+            reverse("medicines_form"),
+            data={
+                "name": "Ibuprofeno",
+                "description": "Ibuprofeno 400mg",
+                "dose": 1,
+            },
+        )
+        medicines = Medicine.objects.all()
+        self.assertEqual(len(medicines), 1)
+
+        self.assertEqual(medicines[0].name, "Ibuprofeno")
+        self.assertEqual(medicines[0].description, "Ibuprofeno 400mg")
+        self.assertEqual(medicines[0].dose, 1)
+
+        self.assertRedirects(response, reverse("medicines_repo"))
+
+    def test_validation_errors_create_medicine(self):
+        response = self.client.post(
+            reverse("medicines_form"),
+            data={},
+        )
+
+        self.assertContains(response, "Por favor ingrese un nombre del medicamento.")
+        self.assertContains(response, "Por favor ingrese la descripción del medicamento.")
+        self.assertContains(response, "Por favor ingrese la dosis del medicamento.")
+
+    def test_edit_medicine_with_valid_data(self):
+        medicine = Medicine.objects.create(
+            name="Ibuprofeno",
+            description="Ibuprofeno 400mg",
+            dose=4,
+        )
+
+        response = self.client.post(
+            reverse("medicines_form"),
+            data={
+                "id": medicine.id,
+                "name": "Paracetamol",
+            },
+        )
+
+        # redirect after post
+        self.assertEqual(response.status_code, 302)
+
+        editedMedicine = Medicine.objects.get(pk=medicine.id)
+        self.assertEqual(editedMedicine.name, "Paracetamol")
+        self.assertEqual(editedMedicine.description, medicine.description)
+        self.assertEqual(editedMedicine.dose, medicine.dose)
+
+    def test_should_response_with_404_status_if_medicine_doesnt_exists(self):
+        response = self.client.get(reverse("medicines_edit", kwargs={"id": 100}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_validation_invalid_dose(self):
+        response = self.client.post(
+            reverse("medicines_form"),
+            data={
+                "name": "Ibuprofeno",
+                "description": "Ibuprofeno 400mg",
+                "dose": 11,
+            },
+        )
+
+        self.assertContains(response, "La dosis debe estar entre 1 y 10.")
+
