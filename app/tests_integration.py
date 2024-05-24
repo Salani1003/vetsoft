@@ -99,6 +99,30 @@ class ClientsTest(TestCase):
         self.assertEqual(editedClient.email, client.email)
 
 
+class ProductTest(TestCase):
+    def test_zero_price_validation(self):
+        response = self.client.post(
+            reverse("products_form"),
+            data={
+                "name": "Pelota",
+                "type": "Juguete",
+                "price": str(0),
+            },
+        )
+        self.assertContains(response, "Por favor ingrese un precio mayor a 0.")
+
+    def test_negative_price_validation(self):
+        response = self.client.post(
+            reverse("products_form"),
+            data={
+                "name": "Pelota",
+                "type": "Juguete",
+                "price": str(-1),
+            },
+        )
+        self.assertContains(response, "Por favor ingrese un precio mayor a 0.")
+
+
 class PetIntegrationTest(TestCase):
     def setUp(self):
         self.example_client = Client.objects.create(

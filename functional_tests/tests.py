@@ -244,6 +244,31 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
         )
 
 
+class ProductCreateEditTestCase(PlaywrightTestCase):
+    def test_should_not_be_able_to_create_a_product_with_negative_or_zero_price(self):
+        self.page.goto(f"{self.live_server_url}{reverse('products_form')}")
+
+        expect(self.page.get_by_role("form")).to_be_visible()
+
+        self.page.get_by_label("Nombre").fill("Pelota")
+        self.page.get_by_label("Tipo").fill("Juguete")
+        self.page.get_by_label("Precio").fill("0")
+
+        self.page.get_by_role("button", name="Guardar").click()
+
+        expect(
+            self.page.get_by_text("Por favor ingrese un precio mayor a 0.")
+        ).to_be_visible()
+
+        self.page.get_by_label("Precio").fill("-10")
+
+        self.page.get_by_role("button", name="Guardar").click()
+
+        expect(
+            self.page.get_by_text("Por favor ingrese un precio mayor a 0.")
+        ).to_be_visible()
+
+
 class PetCreateEditTestCase(PlaywrightTestCase):
     def test_should_not_be_able_to_create_pet_with_birthday_today(self):
         self.page.goto(f"{self.live_server_url}{reverse('pets_form')}")
