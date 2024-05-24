@@ -130,7 +130,7 @@ def validate_medicine(data):
 
     name = data.get("name", "")
     description = data.get("description", "")
-    dose = data.get("dose", "")
+    dose = data.get("dose", None)
 
     if not name:
         errors["name"] = "Por favor ingrese un nombre del medicamento."
@@ -140,6 +140,11 @@ def validate_medicine(data):
 
     if not dose:
         errors["dose"] = "Por favor ingrese la dosis del medicamento."
+    else:
+        dose_value = float(dose)
+        if dose_value < 1.0 or dose_value > 10.0:
+            errors["dose"] = "La dosis debe estar entre 1 y 10."
+        
 
     return errors
 
@@ -336,31 +341,41 @@ class Appointment(models.Model):
 class Medicine(models.Model):
     name = models.CharField(max_length=20)
     description = models.CharField(max_length=100)
-    dose = models.CharField(max_length=20)
-    
+    dose = models.FloatField()
+
     def __str__(self):
         return self.name
-    
+
     @classmethod
     def save_medicine(cls, medicine_data):
         errors = validate_medicine(medicine_data)
 
-        if len(errors.keys()) > 0:
+        if len(errors) > 0:
             return False, errors
 
-        Medicine.objects.create(
+        cls.objects.create(
             name=medicine_data.get("name"),
             description=medicine_data.get("description"),
-            dose=medicine_data.get("dose"),
+            dose=float(medicine_data.get("dose")),
         )
 
         return True, None
-    
+
     def update_medicine(self, medicine_data):
-        self.name = medicine_data.get("name", "") or self.name
-        self.description = medicine_data.get("description", "") or self.description
-        self.dose = medicine_data.get("dose", "") or self.dose
+        self.name = medicine_data.get("name", self.name)
+        self.description = medicine_data.get("description", self.description)
+        self.dose = medicine_data.get("dose", self.dose)
+
+        errors = validate_medicine({
+            "name": self.name,
+            "description": self.description,
+            "dose": self.dose
+        })
+
+        if len(errors) > 0:
+            return False, errors
 
         self.save()
+        return True, None
         
     
