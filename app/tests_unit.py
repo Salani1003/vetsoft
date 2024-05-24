@@ -1,5 +1,5 @@
 from django.test import TestCase
-from app.models import Client, Medicine
+from app.models import Client, Medicine, Product
 
 
 class ClientModelTest(TestCase):
@@ -97,3 +97,48 @@ class MedicineModelTest(TestCase):
         self.assertEqual(errors["dose"], "La dosis debe estar entre 1 y 10.")
         
                 
+
+class ProductModelTest(TestCase):
+    def test_can_create_product(self):
+        result = Product.save_product(
+            {
+                "name": "Pelota",
+                "type": "Juguete",
+                "price": str(33),
+            }
+        )
+
+        self.assertEqual(result, (True, None))
+
+    def test_cannot_create_product_with_price_0(self):
+        result = Product.save_product(
+            {
+                "name": "Pelota",
+                "type": "Juguete",
+                "price": str(0),
+            }
+        )
+
+        self.assertEqual(result, (False, {"price": "Por favor ingrese un precio mayor a 0."}))
+    
+    def test_cannot_create_product_with_price_negative(self):
+        result = Product.save_product(
+            {
+                "name": "Pelota",
+                "type": "Juguete",
+                "price": str(-33),
+            }
+        )
+
+        self.assertEqual(result, (False, {"price": "Por favor ingrese un precio mayor a 0."}))
+    
+    def test_can_create_product_without_price(self):
+        result = Product.save_product(
+            {
+                "name": "Pelota",
+                "type": "Juguete",
+                "price": "",
+            }
+        )
+
+        self.assertEqual(result, (False, {"price": "Por favor ingrese el precio del producto."}))

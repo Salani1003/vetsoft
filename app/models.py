@@ -100,6 +100,8 @@ def validate_product(data):
 
     if not price:
         errors["price"] = "Por favor ingrese el precio del producto."
+    elif not float(price) > 0:
+        errors["price"] = "Por favor ingrese un precio mayor a 0."
 
     return errors
 
@@ -286,8 +288,8 @@ class Product(models.Model):
     @classmethod
     def save_product(cls, product_data):
         errors = validate_product(product_data)
-
         if len(errors.keys()) > 0:
+            
             return False, errors
 
         Product.objects.create(

@@ -55,8 +55,8 @@
                     <input type="float"
                         id="price"
                         name="price"
-                        class="form-control"
-                        value="{{ product.price}}"
+                        class="form-control {% if errors.price %}is-invalid{% endif %}"
+                        value="{{ product.price }}"
                         required/>
 
                     {% if errors.price %}
