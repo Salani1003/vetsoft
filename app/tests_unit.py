@@ -1,5 +1,8 @@
+from datetime import datetime, timedelta
+
 from django.test import TestCase
-from app.models import Client, Medicine, Product
+
+from app.models import Client, Pet, Product, Medicine
 
 
 class ClientModelTest(TestCase):
@@ -98,6 +101,47 @@ class MedicineModelTest(TestCase):
         
                 
 
+class PetModelTest(TestCase):
+    def test_cant_create_pet_with_birthday_today(self):
+        Client.save_client(
+            {
+                "name": "Juan Sebastian Veron",
+                "phone": "221555232",
+                "address": "13 y 44",
+                "email": "brujita75@hotmail.com",
+            }
+        )
+        _, errors = Pet.save_pet(
+            {
+                "name": "Rex",
+                "breed": "Labrador",
+                "birthday": datetime.now().date(),
+                "client": 1,
+            }
+        )
+        self.assertIn("invalid_birthday", errors)
+
+    def test_can_create_pet(self):
+        Client.save_client(
+            {
+                "name": "Juan Sebastian Veron",
+                "phone": "221555232",
+                "address": "13 y 44",
+                "email": "brujita75@hotmail.com",
+            }
+        )
+        is_success, errors = Pet.save_pet(
+            {
+                "name": "Rex",
+                "breed": "Labrador",
+                "birthday": datetime.now().date() - timedelta(days=1),
+                "client": 1,
+            }
+        )
+        print(errors)
+        self.assertTrue(is_success)
+
+
 class ProductModelTest(TestCase):
     def test_can_create_product(self):
         result = Product.save_product(
@@ -119,8 +163,10 @@ class ProductModelTest(TestCase):
             }
         )
 
-        self.assertEqual(result, (False, {"price": "Por favor ingrese un precio mayor a 0."}))
-    
+        self.assertEqual(
+            result, (False, {"price": "Por favor ingrese un precio mayor a 0."})
+        )
+
     def test_cannot_create_product_with_price_negative(self):
         result = Product.save_product(
             {
@@ -130,8 +176,10 @@ class ProductModelTest(TestCase):
             }
         )
 
-        self.assertEqual(result, (False, {"price": "Por favor ingrese un precio mayor a 0."}))
-    
+        self.assertEqual(
+            result, (False, {"price": "Por favor ingrese un precio mayor a 0."})
+        )
+
     def test_can_create_product_without_price(self):
         result = Product.save_product(
             {
@@ -141,4 +189,6 @@ class ProductModelTest(TestCase):
             }
         )
 
-        self.assertEqual(result, (False, {"price": "Por favor ingrese el precio del producto."}))
+        self.assertEqual(
+            result, (False, {"price": "Por favor ingrese el precio del producto."})
+        )

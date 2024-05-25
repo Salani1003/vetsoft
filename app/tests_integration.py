@@ -1,6 +1,10 @@
-from django.test import TestCase
+from datetime import datetime, timedelta
+
 from django.shortcuts import reverse
-from app.models import Client, Medicine
+from django.test import Client as DjangoClient
+from django.test import TestCase
+
+from app.models import Client, Pet, Medicine
 
 
 class HomePageTest(TestCase):
@@ -175,6 +179,7 @@ class MedicineTest(TestCase):
         self.assertContains(response, "La dosis debe estar entre 1 y 10.")
 
 
+
 class ProductTest(TestCase):
     def test_zero_price_validation(self):
         response = self.client.post(
@@ -198,3 +203,42 @@ class ProductTest(TestCase):
         )
         self.assertContains(response, "Por favor ingrese un precio mayor a 0.")
 
+
+class PetIntegrationTest(TestCase):
+    def setUp(self):
+        self.example_client = Client.objects.create(
+            name="Juan Sebastián Veron",
+            address="13 y 44",
+            phone="221555232",
+            email="brujita75@hotmail.com",
+        )
+
+    def test_create_pet_birthday_today(self):
+        response = self.client.post(
+            reverse("pets_form"),
+            data={
+                "name": "Fiat",
+                "breed": "Labrador",
+                "birthday": datetime.now().date(),
+                "client": self.example_client.id,
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)  # returns same page but with error
+        self.assertFalse(Pet.objects.filter(name="Fiat").exists())
+
+    def test_create_pet_birthday_past_date(self):
+        past_date = datetime.now().date() - timedelta(days=1)
+        response = self.client.post(
+            reverse("pets_form"),
+            data={
+                "name": "Buddy",
+                "breed": "Beagle",
+                "birthday": past_date,
+                "client": self.example_client.id,
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Pet.objects.count(), 1)
+        self.assertEqual(Pet.objects.first().name, "Buddy")
