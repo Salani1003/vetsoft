@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from django.test import TestCase
 
-from app.models import Client, Pet, Product, Medicine
+from app.models import Client, Pet, Product, Medicine,Provider
 
 
 class ClientModelTest(TestCase):
@@ -191,4 +191,53 @@ class ProductModelTest(TestCase):
 
         self.assertEqual(
             result, (False, {"price": "Por favor ingrese el precio del producto."})
+        )
+
+
+class ProviderModelTest(TestCase):
+    
+    def test_can_create_provider(self):
+        result=Provider.save_provider(
+            {
+                "name": "Servicios Veterinarios SA",
+                "email": "Serviciosveterinarios@gmail.com",
+                "address": "Calle 13 n°1587",
+            }
+        )       
+        
+        self.assertEqual(result, (True, None))
+
+    def test_cant_create_provider_without_name(self):
+        result=Provider.save_provider(
+            {
+                "name":"",
+                "email": "Serviciosveterinarios@gmail.com",
+                "address": "Calle 13 n°1587",
+            }
+        )
+        self.assertEqual(
+            result, (False, {"name": "Por favor ingrese un nombre"})
+        )
+    def test_cant_create_provider_with_invalid_email(self):
+        result=Provider.save_provider(
+            {
+                "name":"Servicios Veterinarios SA",
+                "email": "Serviciosveterinariosgmail.com",
+                "address": "Calle 13 n°1587",
+            }
+        )
+        self.assertEqual(
+            result, (False, {"email": "Por favor ingrese un email valido"})
+        )
+
+    def test_cant_create_provider_without_address(self):
+        result=Provider.save_provider(
+            {
+                "name":"Servicios Veterinarios SA",
+                "email": "Serviciosveterinarios@gmail.com",
+                "address": "",
+            }
+        )
+        self.assertEqual(
+            result, (False, {"address": "Por favor ingrese una dirección"})
         )

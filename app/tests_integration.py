@@ -4,7 +4,7 @@ from django.shortcuts import reverse
 from django.test import Client as DjangoClient
 from django.test import TestCase
 
-from app.models import Client, Pet, Medicine
+from app.models import Client, Pet, Medicine,Provider
 
 
 class HomePageTest(TestCase):
@@ -242,3 +242,115 @@ class PetIntegrationTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Pet.objects.count(), 1)
         self.assertEqual(Pet.objects.first().name, "Buddy")
+
+class ProviderIntegrationTest(TestCase):
+    def test_repo_use_repo_template(self):
+        response = self.client.get(reverse("providers_repo"))
+        self.assertTemplateUsed(response, "providers/repository.html")
+
+    def test_repo_display_all_medicines(self):
+        response = self.client.get(reverse("providers_repo"))
+        self.assertTemplateUsed(response, "providers/repository.html")
+
+    def test_form_use_form_template(self):
+        response = self.client.get(reverse("providers_form"))
+        self.assertTemplateUsed(response, "providers/form.html")
+
+    def test_can_create_provider(self):
+        response = self.client.post(
+            reverse("providers_form"),
+            data={
+                "name": "Laboratorio Roemmers",
+                "address": "13 y 44",
+                "email": "laboratorioRoemmers@gmail.com"
+                }
+        )
+        providers = Provider.objects.all()
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(providers), 1)
+        self.assertEqual(providers[0].name, "Laboratorio Roemmers")
+        self.assertEqual(providers[0].address, "13 y 44")
+        self.assertEqual(providers[0].email, "laboratorioRoemmers@gmail.com")
+        self.assertRedirects(response,reverse("providers_repo"))
+
+    def test_validation_errors_create_provider(self):
+        response = self.client.post(
+            reverse("providers_form"),
+            data={},
+        )
+
+        self.assertContains(response, "Por favor ingrese un nombre")
+        self.assertContains(response, "Por favor ingrese una dirección")
+        self.assertContains(response, "Por favor ingrese un email")
+
+    def test_edit_provider_with_valid_data(self):
+        provider=Provider.objects.create(
+                name= "Servicios Veterinarios SA",
+                email= "Serviciosveterinarios@gmail.com",
+                address= "Calle 13 n°1587",
+        )
+
+        response = self.client.post(
+            reverse("providers_form"),
+            data={
+                "id": provider.id,
+                "name": "Laboratorio Roemmers",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        editedProvider = Provider.objects.get(pk=provider.id)
+        self.assertEqual(editedProvider.name, "Laboratorio Roemmers")
+        self.assertEqual(editedProvider.email, provider.email)
+        self.assertEqual(editedProvider.address, provider.address)
+
+    def test_should_response_with_404_status_if_provider_doesnt_exists(self):
+        response = self.client.get(reverse("providers_edit", kwargs={"id": 100}))
+        self.assertEqual(response.status_code, 404)
+    
+    def test_validation_invalid_email(self):
+        response = self.client.post(
+            reverse("providers_form"),
+            data={
+                "name": "Laboratorio Roemmers",
+                "email": "laboratorioRoemmersgmail.com",
+                "address": "13 y 44",
+            },
+        )
+
+        self.assertContains(response, "Por favor ingrese un email valido")
+
+    def test_validation_invalid_address(self):
+        response = self.client.post(
+            reverse("providers_form"),
+            data={
+                "name": "Laboratorio Roemmers",
+                "email": "laboratorioRoemmersgmail.com",
+                "address": "",
+            },
+        )
+
+        self.assertContains(response, "Por favor ingrese una dirección")
+
+    def test_edit_provider_without_name(self):
+        # If we want to edit a provider without a name, it should keep the previous name.
+        provider=Provider.objects.create(
+                name= "Servicios Veterinarios SA",
+                email= "Serviciosveterinarios@gmail.com",
+                address= "Calle 13 n°1587",
+        )
+
+        response = self.client.post(
+            reverse("providers_form"),
+            data={
+                "id": provider.id,
+                "name": "",
+                "email": "nuevoEmail@gmail.com",
+                "address": "Calle 13 n°1587",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        editedProvider = Provider.objects.get(pk=provider.id)
+        self.assertEqual(editedProvider.name, "Servicios Veterinarios SA")
+
+    

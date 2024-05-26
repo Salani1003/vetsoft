@@ -5,7 +5,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
 from playwright.sync_api import Browser, expect, sync_playwright
 
-from app.models import Client, Medicine
+from app.models import Client, Medicine,Provider
 
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 playwright = sync_playwright().start()
@@ -445,3 +445,86 @@ class PetCreateEditTestCase(PlaywrightTestCase):
 
         expect(self.page.locator("tbody")).to_contain_text("Pocchi")
         expect(self.page.locator("tbody")).to_contain_text("Shiba")
+
+class ProviderCreateEditTestCase(PlaywrightTestCase):
+    def test_should_not_be_able_to_create_a_provider_with_invalid_data(self):
+        self.page.goto(f"{self.live_server_url}{reverse('providers_form')}")
+
+        expect(self.page.get_by_role("form")).to_be_visible()
+
+        self.page.get_by_label("Nombre").fill("Servicios Veterinarios")
+        self.page.get_by_label("Email").fill("email@gmail.com")
+        self.page.get_by_label("Dirección").fill("")
+
+        self.page.get_by_role("button", name="Guardar").click()
+
+        expect(self.page.get_by_text("Por favor ingrese una dirección")).to_be_visible()
+    
+    def test_should_be_able_to_create_a_provider(self):
+        self.page.goto(f"{self.live_server_url}{reverse('providers_form')}")
+
+        expect(self.page.get_by_role("form")).to_be_visible()
+
+        self.page.get_by_label("Nombre").fill("Servicios Veterinarios")
+        self.page.get_by_label("Email").fill("email@gmail.com")
+        self.page.get_by_label("Dirección").fill("13 y 44")
+
+        self.page.get_by_role("button", name="Guardar").click()
+
+        expect(self.page.get_by_text("Servicios Veterinarios")).to_be_visible()
+        expect(self.page.get_by_text("email@gmail.com")).to_be_visible()
+        expect(self.page.get_by_text("13 y 44")).to_be_visible()
+
+
+    def test_should_be_able_to_edit_a_provider(self):
+        provider = Provider.objects.create(
+            name="Proveedor  1 SA",
+            email="proveedor1@gmail.com",
+            address="brandsen 159"
+        )
+        path = reverse("providers_edit", kwargs={"id": provider.id})
+        self.page.goto(f"{self.live_server_url}{path}")
+    
+        self.page.get_by_label("Nombre").fill("Nuevo proveedor SA")
+        self.page.get_by_label("Email").fill("unNuevoEmail@gmail.com")
+        self.page.get_by_label("Dirección").fill("primera junta 659")
+        
+
+        self.page.get_by_role("button", name="Guardar").click()
+    
+
+        expect(self.page.get_by_text("Proveedor  1 SA")).not_to_be_visible()
+        expect(self.page.get_by_text("proveedor1@gmail.com")).not_to_be_visible()
+        expect(self.page.get_by_text("brandsen 159")).not_to_be_visible()
+    
+        
+        expect(self.page.get_by_text("Nuevo proveedor SA")).to_be_visible()
+        expect(self.page.get_by_text("unNuevoEmail@gmail.com")).to_be_visible()
+        expect(self.page.get_by_text("primera junta 659")).to_be_visible()
+    
+        edit_action = self.page.get_by_role("link", name="Editar")
+        expect(edit_action).to_have_attribute(
+            "href", reverse("providers_edit", kwargs={"id": provider.id})
+        )
+
+    def test_should_be_able_to_delete_a_provider(self):
+  
+        Provider.objects.create(
+            name="Servicios Veterinarios",
+            email="email@gmail.com",
+            address="13 y 44"
+        )
+
+        self.page.goto(f"{self.live_server_url}{reverse('providers_repo')}")
+        expect(self.page.get_by_text("Servicios Veterinarios")).to_be_visible()
+
+        def is_delete_response(response):
+            return response.url.find(reverse("providers_delete"))
+        
+        with self.page.expect_response(is_delete_response) as response_info:
+            self.page.get_by_role("button", name="Eliminar").click()
+        
+        response= response_info.value
+        self.assertTrue(response.status < 400)
+
+        expect(self.page.get_by_text("Servicios Veterinarios")).not_to_be_visible()
