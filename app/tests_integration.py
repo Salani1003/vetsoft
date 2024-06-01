@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
 from django.shortcuts import reverse
-from django.test import Client as DjangoClient
 from django.test import TestCase
 
 from app.models import Client, Pet, Medicine,Provider
