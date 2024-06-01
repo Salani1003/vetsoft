@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from django.test import TestCase
 
-from app.models import Client, Pet, Product, Medicine,Provider
+from app.models import Client, Medicine, Pet, Product, Provider
 
 
 class ClientModelTest(TestCase):

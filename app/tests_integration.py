@@ -1,9 +1,12 @@
+# Imports de módulos estándar de Python
 from datetime import datetime, timedelta
 
+# Imports de terceros
 from django.shortcuts import reverse
 from django.test import TestCase
 
-from app.models import Client, Pet, Medicine,Provider
+# Imports de módulos locales o del propio proyecto
+from app.models import Client, Medicine, Pet, Provider
 
 
 class HomePageTest(TestCase):
