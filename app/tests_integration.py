@@ -10,12 +10,16 @@ from app.models import Client, Medicine, Pet, Provider
 
 
 class HomePageTest(TestCase):
+    """ "Test the home page."""
+
     def test_use_home_template(self):
         response = self.client.get(reverse("home"))
         self.assertTemplateUsed(response, "home.html")
 
 
 class ClientsTest(TestCase):
+    """Test the clients model integration"""
+
     def test_repo_use_repo_template(self):
         response = self.client.get(reverse("clients_repo"))
         self.assertTemplateUsed(response, "clients/repository.html")
@@ -100,7 +104,10 @@ class ClientsTest(TestCase):
         self.assertEqual(editedClient.address, client.address)
         self.assertEqual(editedClient.email, client.email)
 
+
 class MedicineTest(TestCase):
+    """Test the medicines model integration"""
+
     def test_repo_use_repo_template(self):
         response = self.client.get(reverse("medicines_repo"))
         self.assertTemplateUsed(response, "medicines/repository.html")
@@ -138,7 +145,10 @@ class MedicineTest(TestCase):
         )
 
         self.assertContains(response, "Por favor ingrese un nombre del medicamento.")
-        self.assertContains(response, "Por favor ingrese la descripción del medicamento.")
+        self.assertContains(
+            response,
+            "Por favor ingrese la descripción del medicamento.",
+        )
         self.assertContains(response, "Por favor ingrese la dosis del medicamento.")
 
     def test_edit_medicine_with_valid_data(self):
@@ -181,8 +191,9 @@ class MedicineTest(TestCase):
         self.assertContains(response, "La dosis debe estar entre 1 y 10.")
 
 
-
 class ProductTest(TestCase):
+    """Test the product model"""
+
     def test_zero_price_validation(self):
         response = self.client.post(
             reverse("products_form"),
@@ -207,6 +218,8 @@ class ProductTest(TestCase):
 
 
 class PetIntegrationTest(TestCase):
+    """Test the pets models."""
+
     def setUp(self):
         self.example_client = Client.objects.create(
             name="Juan Sebastián Veron",
@@ -245,7 +258,10 @@ class PetIntegrationTest(TestCase):
         self.assertEqual(Pet.objects.count(), 1)
         self.assertEqual(Pet.objects.first().name, "Buddy")
 
+
 class ProviderIntegrationTest(TestCase):
+    """Test the providers model integration"""
+
     def test_repo_use_repo_template(self):
         response = self.client.get(reverse("providers_repo"))
         self.assertTemplateUsed(response, "providers/repository.html")
@@ -264,8 +280,8 @@ class ProviderIntegrationTest(TestCase):
             data={
                 "name": "Laboratorio Roemmers",
                 "address": "13 y 44",
-                "email": "laboratorioRoemmers@gmail.com"
-                }
+                "email": "laboratorioRoemmers@gmail.com",
+            },
         )
         providers = Provider.objects.all()
         self.assertEqual(response.status_code, 302)
@@ -273,7 +289,7 @@ class ProviderIntegrationTest(TestCase):
         self.assertEqual(providers[0].name, "Laboratorio Roemmers")
         self.assertEqual(providers[0].address, "13 y 44")
         self.assertEqual(providers[0].email, "laboratorioRoemmers@gmail.com")
-        self.assertRedirects(response,reverse("providers_repo"))
+        self.assertRedirects(response, reverse("providers_repo"))
 
     def test_validation_errors_create_provider(self):
         response = self.client.post(
@@ -286,10 +302,10 @@ class ProviderIntegrationTest(TestCase):
         self.assertContains(response, "Por favor ingrese un email")
 
     def test_edit_provider_with_valid_data(self):
-        provider=Provider.objects.create(
-                name= "Servicios Veterinarios SA",
-                email= "Serviciosveterinarios@gmail.com",
-                address= "Calle 13 n°1587",
+        provider = Provider.objects.create(
+            name="Servicios Veterinarios SA",
+            email="Serviciosveterinarios@gmail.com",
+            address="Calle 13 n°1587",
         )
 
         response = self.client.post(
@@ -309,7 +325,7 @@ class ProviderIntegrationTest(TestCase):
     def test_should_response_with_404_status_if_provider_doesnt_exists(self):
         response = self.client.get(reverse("providers_edit", kwargs={"id": 100}))
         self.assertEqual(response.status_code, 404)
-    
+
     def test_validation_invalid_email(self):
         response = self.client.post(
             reverse("providers_form"),
@@ -336,10 +352,10 @@ class ProviderIntegrationTest(TestCase):
 
     def test_edit_provider_without_name(self):
         # If we want to edit a provider without a name, it should keep the previous name.
-        provider=Provider.objects.create(
-                name= "Servicios Veterinarios SA",
-                email= "Serviciosveterinarios@gmail.com",
-                address= "Calle 13 n°1587",
+        provider = Provider.objects.create(
+            name="Servicios Veterinarios SA",
+            email="Serviciosveterinarios@gmail.com",
+            address="Calle 13 n°1587",
         )
 
         response = self.client.post(
@@ -354,5 +370,3 @@ class ProviderIntegrationTest(TestCase):
         self.assertEqual(response.status_code, 302)
         editedProvider = Provider.objects.get(pk=provider.id)
         self.assertEqual(editedProvider.name, "Servicios Veterinarios SA")
-
-    

@@ -28,7 +28,7 @@ def clients_form(request, id=None):
             return redirect(reverse("clients_repo"))
 
         return render(
-            request, "clients/form.html", {"errors": errors, "client": request.POST}
+            request, "clients/form.html", {"errors": errors, "client": request.POST},
         )
 
     client = None
@@ -65,7 +65,7 @@ def medicines_form(request, id=None):
             return redirect(reverse("medicines_repo"))
 
         return render(
-            request, "medicines/form.html", {"errors": errors, "medicine": request.POST}
+            request, "medicines/form.html", {"errors": errors, "medicine": request.POST},
         )
 
     medicine = None
@@ -105,7 +105,7 @@ def pets_form(request, id=None):
             return redirect(reverse("pets_repo"))
 
         return render(
-            request, "pets/form.html", {"errors": errors, "pet": request.POST}
+            request, "pets/form.html", {"errors": errors, "pet": request.POST},
         )
     pet = None
     if id is not None:
@@ -142,7 +142,7 @@ def vets_form(request, id=None):
             return redirect(reverse("vets_repo"))
 
         return render(
-            request, "vets/form.html", {"errors": errors, "vet": request.POST}
+            request, "vets/form.html", {"errors": errors, "vet": request.POST},
         )
 
     vet = None
@@ -181,7 +181,7 @@ def providers_form(request, id=None):
             return redirect(reverse("providers_repo"))
 
         return render(
-            request, "providers/form.html", {"errors": errors, "provider": request.POST}
+            request, "providers/form.html", {"errors": errors, "provider": request.POST},
         )
 
     provider = None
@@ -220,7 +220,7 @@ def products_form(request, id=None):
             return redirect(reverse("products_repo"))
 
         return render(
-            request, "products/form.html", {"errors": errors, "product": request.POST}
+            request, "products/form.html", {"errors": errors, "product": request.POST},
         )
     product = None
     if id is not None:
@@ -257,7 +257,7 @@ def appointments_form(request, id=None):
             return redirect(reverse("appointments_repo"))
 
         return render(
-            request, "appointments/form.html", {"errors": errors, "appointment": request.POST}
+            request, "appointments/form.html", {"errors": errors, "appointment": request.POST},
         )
     appointment = None
     if id is not None:

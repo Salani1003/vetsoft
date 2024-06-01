@@ -6,6 +6,8 @@ from app.models import Client, Medicine, Pet, Product, Provider
 
 
 class ClientModelTest(TestCase):
+    """Test the client model."""
+
     def test_can_create_and_get_client(self):
         Client.save_client(
             {
@@ -13,7 +15,7 @@ class ClientModelTest(TestCase):
                 "phone": "221555232",
                 "address": "13 y 44",
                 "email": "brujita75@hotmail.com",
-            }
+            },
         )
         clients = Client.objects.all()
         self.assertEqual(len(clients), 1)
@@ -30,7 +32,7 @@ class ClientModelTest(TestCase):
                 "phone": "221555232",
                 "address": "13 y 44",
                 "email": "brujita75@hotmail.com",
-            }
+            },
         )
         client = Client.objects.get(pk=1)
 
@@ -49,7 +51,7 @@ class ClientModelTest(TestCase):
                 "phone": "221555232",
                 "address": "13 y 44",
                 "email": "brujita75@hotmail.com",
-            }
+            },
         )
         client = Client.objects.get(pk=1)
 
@@ -61,14 +63,17 @@ class ClientModelTest(TestCase):
 
         self.assertEqual(client_updated.phone, "221555232")
 
+
 class MedicineModelTest(TestCase):
+    """Test the medicine model."""
+
     def test_can_create_and_get_medicine(self):
         Medicine.save_medicine(
             {
                 "name": "Ivermectina",
                 "description": "Antiparasitario",
                 "dose": 1,
-            }
+            },
         )
         medicines = Medicine.objects.all()
         self.assertEqual(len(medicines), 1)
@@ -83,7 +88,7 @@ class MedicineModelTest(TestCase):
                 "name": "Ivermectina",
                 "description": "Antiparasitario",
                 "dose": "11",
-            }
+            },
         )
         self.assertFalse(saved)
         self.assertEqual(errors["dose"], "La dosis debe estar entre 1 y 10.")
@@ -94,14 +99,15 @@ class MedicineModelTest(TestCase):
                 "name": "Ivermectina",
                 "description": "Antiparasitario",
                 "dose": "0",
-            }
+            },
         )
         self.assertFalse(saved)
         self.assertEqual(errors["dose"], "La dosis debe estar entre 1 y 10.")
-        
-                
+
 
 class PetModelTest(TestCase):
+    """Test the pet model."""
+
     def test_cant_create_pet_with_birthday_today(self):
         Client.save_client(
             {
@@ -109,7 +115,7 @@ class PetModelTest(TestCase):
                 "phone": "221555232",
                 "address": "13 y 44",
                 "email": "brujita75@hotmail.com",
-            }
+            },
         )
         _, errors = Pet.save_pet(
             {
@@ -117,7 +123,7 @@ class PetModelTest(TestCase):
                 "breed": "Labrador",
                 "birthday": datetime.now().date(),
                 "client": 1,
-            }
+            },
         )
         self.assertIn("invalid_birthday", errors)
 
@@ -128,7 +134,7 @@ class PetModelTest(TestCase):
                 "phone": "221555232",
                 "address": "13 y 44",
                 "email": "brujita75@hotmail.com",
-            }
+            },
         )
         is_success, errors = Pet.save_pet(
             {
@@ -136,20 +142,22 @@ class PetModelTest(TestCase):
                 "breed": "Labrador",
                 "birthday": datetime.now().date() - timedelta(days=1),
                 "client": 1,
-            }
+            },
         )
         print(errors)
         self.assertTrue(is_success)
 
 
 class ProductModelTest(TestCase):
+    """Test the product model."""
+
     def test_can_create_product(self):
         result = Product.save_product(
             {
                 "name": "Pelota",
                 "type": "Juguete",
                 "price": str(33),
-            }
+            },
         )
 
         self.assertEqual(result, (True, None))
@@ -160,11 +168,12 @@ class ProductModelTest(TestCase):
                 "name": "Pelota",
                 "type": "Juguete",
                 "price": str(0),
-            }
+            },
         )
 
         self.assertEqual(
-            result, (False, {"price": "Por favor ingrese un precio mayor a 0."})
+            result,
+            (False, {"price": "Por favor ingrese un precio mayor a 0."}),
         )
 
     def test_cannot_create_product_with_price_negative(self):
@@ -173,11 +182,12 @@ class ProductModelTest(TestCase):
                 "name": "Pelota",
                 "type": "Juguete",
                 "price": str(-33),
-            }
+            },
         )
 
         self.assertEqual(
-            result, (False, {"price": "Por favor ingrese un precio mayor a 0."})
+            result,
+            (False, {"price": "Por favor ingrese un precio mayor a 0."}),
         )
 
     def test_can_create_product_without_price(self):
@@ -186,58 +196,64 @@ class ProductModelTest(TestCase):
                 "name": "Pelota",
                 "type": "Juguete",
                 "price": "",
-            }
+            },
         )
 
         self.assertEqual(
-            result, (False, {"price": "Por favor ingrese el precio del producto."})
+            result,
+            (False, {"price": "Por favor ingrese el precio del producto."}),
         )
 
 
 class ProviderModelTest(TestCase):
-    
+    """Test the provider model."""
+
     def test_can_create_provider(self):
-        result=Provider.save_provider(
+        result = Provider.save_provider(
             {
                 "name": "Servicios Veterinarios SA",
                 "email": "Serviciosveterinarios@gmail.com",
                 "address": "Calle 13 n°1587",
-            }
-        )       
-        
+            },
+        )
+
         self.assertEqual(result, (True, None))
 
     def test_cant_create_provider_without_name(self):
-        result=Provider.save_provider(
+        result = Provider.save_provider(
             {
-                "name":"",
+                "name": "",
                 "email": "Serviciosveterinarios@gmail.com",
                 "address": "Calle 13 n°1587",
-            }
+            },
         )
         self.assertEqual(
-            result, (False, {"name": "Por favor ingrese un nombre"})
+            result,
+            (False, {"name": "Por favor ingrese un nombre"}),
         )
+
     def test_cant_create_provider_with_invalid_email(self):
-        result=Provider.save_provider(
+        result = Provider.save_provider(
             {
-                "name":"Servicios Veterinarios SA",
+                "name": "Servicios Veterinarios SA",
                 "email": "Serviciosveterinariosgmail.com",
                 "address": "Calle 13 n°1587",
-            }
+            },
         )
         self.assertEqual(
-            result, (False, {"email": "Por favor ingrese un email valido"})
+            result,
+            (False, {"email": "Por favor ingrese un email valido"}),
         )
 
     def test_cant_create_provider_without_address(self):
-        result=Provider.save_provider(
+        result = Provider.save_provider(
             {
-                "name":"Servicios Veterinarios SA",
+                "name": "Servicios Veterinarios SA",
                 "email": "Serviciosveterinarios@gmail.com",
                 "address": "",
-            }
+            },
         )
         self.assertEqual(
-            result, (False, {"address": "Por favor ingrese una dirección"})
+            result,
+            (False, {"address": "Por favor ingrese una dirección"}),
         )
