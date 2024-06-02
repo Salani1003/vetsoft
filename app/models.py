@@ -4,6 +4,7 @@ from django.db import models
 
 
 def validate_client(data):
+    """Validates the clients data."""
     errors = {}
 
     name = data.get("name", "")
@@ -25,6 +26,9 @@ def validate_client(data):
 
 
 def validate_pet(data):
+    """
+    Validates the pets data
+    """
     errors = {}
 
     name = data.get("name", "")
@@ -56,6 +60,9 @@ def validate_pet(data):
 
 
 def validate_vet(data):
+    """
+    Validates the vets data
+    """
     errors = {}
 
     name = data.get("name", "")
@@ -77,6 +84,9 @@ def validate_vet(data):
 
 
 def validate_provider(data):
+    """
+    Validates the providers data
+    """
     errors = {}
 
     name = data.get("name", "")
@@ -97,6 +107,9 @@ def validate_provider(data):
 
 
 def validate_product(data):
+    """
+    Validates the products data
+    """
     errors = {}
 
     name = data.get("name", "")
@@ -118,6 +131,9 @@ def validate_product(data):
 
 
 def validate_appointment(data):
+    """
+    Validates the appointments data
+    """
     errors = {}
 
     pet = data.get("pet", "")
@@ -141,6 +157,9 @@ def validate_appointment(data):
 
 
 def validate_medicine(data):
+    """
+    Validates the medicine data
+    """
     errors = {}
 
     name = data.get("name", "")
