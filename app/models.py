@@ -4,6 +4,7 @@ from django.db import models
 
 
 def validate_client(data):
+    """Validates the clients data."""
     errors = {}
 
     name = data.get("name", "")
@@ -27,6 +28,9 @@ def validate_client(data):
 
 
 def validate_pet(data):
+    """
+    Validates the pets data
+    """
     errors = {}
 
     name = data.get("name", "")
@@ -58,6 +62,9 @@ def validate_pet(data):
 
 
 def validate_vet(data):
+    """
+    Validates the vets data
+    """
     errors = {}
 
     name = data.get("name", "")
@@ -79,6 +86,9 @@ def validate_vet(data):
 
 
 def validate_provider(data):
+    """
+    Validates the providers data
+    """
     errors = {}
 
     name = data.get("name", "")
@@ -99,6 +109,9 @@ def validate_provider(data):
 
 
 def validate_product(data):
+    """
+    Validates the products data
+    """
     errors = {}
 
     name = data.get("name", "")
@@ -120,6 +133,9 @@ def validate_product(data):
 
 
 def validate_appointment(data):
+    """
+    Validates the appointments data
+    """
     errors = {}
 
     pet = data.get("pet", "")
@@ -143,6 +159,9 @@ def validate_appointment(data):
 
 
 def validate_medicine(data):
+    """
+    Validates the medicine data
+    """
     errors = {}
 
     name = data.get("name", "")
@@ -166,6 +185,8 @@ def validate_medicine(data):
 
 
 class Client(models.Model):
+    """Client model"""
+
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=15)
     email = models.EmailField()
@@ -176,6 +197,7 @@ class Client(models.Model):
 
     @classmethod
     def save_client(cls, client_data):
+        """Save a new client to the database"""
         errors = validate_client(client_data)
 
         if len(errors.keys()) > 0:
@@ -191,6 +213,7 @@ class Client(models.Model):
         return True, None
 
     def update_client(self, client_data):
+        """Update an existing client in the database"""
         self.name = client_data.get("name", "") or self.name
         self.email = client_data.get("email", "") or self.email
         self.phone = client_data.get("phone", "") or self.phone
@@ -200,6 +223,8 @@ class Client(models.Model):
 
 
 class Pet(models.Model):
+    """Pet model"""
+
     name = models.CharField(max_length=20)
     breed = models.CharField(max_length=20)
     birthday = models.DateField()
@@ -210,6 +235,7 @@ class Pet(models.Model):
 
     @classmethod
     def save_pet(cls, pet_data):
+        """Save a new pet to the database"""
         errors = validate_pet(pet_data)
 
         if len(errors.keys()) > 0:
@@ -225,6 +251,7 @@ class Pet(models.Model):
         return True, None
 
     def update_pet(self, pet_data):
+        """Update an existing pet in the database"""
         self.name = pet_data.get("name", "") or self.name
         self.breed = pet_data.get("breed", "") or self.breed
         self.birthday = pet_data.get("birthday", "") or self.birthday
@@ -234,6 +261,8 @@ class Pet(models.Model):
 
 
 class Vet(models.Model):
+    """Vet model"""
+
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=15)
     email = models.EmailField()
@@ -243,6 +272,7 @@ class Vet(models.Model):
 
     @classmethod
     def save_vet(cls, vet_data):
+        """Save a new vet to the database"""
         errors = validate_vet(vet_data)
 
         if len(errors.keys()) > 0:
@@ -257,6 +287,7 @@ class Vet(models.Model):
         return True, None
 
     def update_vet(self, vet_data):
+        """Update an existing vet in the database"""
         self.name = vet_data.get("name", "") or self.name
         self.email = vet_data.get("email", "") or self.email
         self.phone = vet_data.get("phone", "") or self.phone
@@ -265,6 +296,8 @@ class Vet(models.Model):
 
 
 class Provider(models.Model):
+    """Provider model"""
+
     name = models.CharField(max_length=100)
     email = models.EmailField()
     address = models.CharField(max_length=100)
@@ -274,6 +307,7 @@ class Provider(models.Model):
 
     @classmethod
     def save_provider(cls, provider_data):
+        """Save a new provider to the database"""
         errors = validate_provider(provider_data)
 
         if len(errors.keys()) > 0:
@@ -288,6 +322,7 @@ class Provider(models.Model):
         return True, None
 
     def update_provider(self, provider_data):
+        """Update an existing provider in the database"""
         self.name = provider_data.get("name", "") or self.name
         self.email = provider_data.get("email", "") or self.email
         self.address = provider_data.get("address", "") or self.address
@@ -296,6 +331,8 @@ class Provider(models.Model):
 
 
 class Product(models.Model):
+    """Product model"""
+
     name = models.CharField(max_length=20)
     type = models.CharField(max_length=20)
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -305,6 +342,7 @@ class Product(models.Model):
 
     @classmethod
     def save_product(cls, product_data):
+        """Save a new product to the database"""
         errors = validate_product(product_data)
         if len(errors.keys()) > 0:
             return False, errors
@@ -318,6 +356,7 @@ class Product(models.Model):
         return True, None
 
     def update_product(self, product_data):
+        """Update an existing product in the database"""
         self.name = product_data.get("name", "") or self.name
         self.type = product_data.get("type", "") or self.type
         self.price = product_data.get("price", "") or self.price
@@ -326,6 +365,8 @@ class Product(models.Model):
 
 
 class Appointment(models.Model):
+    """Appointment model"""
+
     pet = models.ForeignKey(Pet, on_delete=models.CASCADE)
     vet = models.ForeignKey(Vet, on_delete=models.CASCADE)
     date = models.DateField()
@@ -336,6 +377,7 @@ class Appointment(models.Model):
 
     @classmethod
     def save_appointment(cls, appointment_data):
+        """Save a new appointment to the database"""
         errors = validate_appointment(appointment_data)
 
         if len(errors.keys()) > 0:
@@ -351,6 +393,7 @@ class Appointment(models.Model):
         return True, None
 
     def update_appointment(self, appointment_data):
+        """Update an existing appointment in the database"""
         self.pet_id = appointment_data.get("pet", "") or self.pet
         self.vet_id = appointment_data.get("vet", "") or self.vet
         self.date = appointment_data.get("date", "") or self.date
@@ -360,6 +403,8 @@ class Appointment(models.Model):
 
 
 class Medicine(models.Model):
+    """Medicine model"""
+
     name = models.CharField(max_length=20)
     description = models.CharField(max_length=100)
     dose = models.FloatField()
@@ -369,6 +414,7 @@ class Medicine(models.Model):
 
     @classmethod
     def save_medicine(cls, medicine_data):
+        """Save a new medicine to the database"""
         errors = validate_medicine(medicine_data)
 
         if len(errors) > 0:
@@ -383,12 +429,17 @@ class Medicine(models.Model):
         return True, None
 
     def update_medicine(self, medicine_data):
+        """Update an existing medicine in the database"""
         self.name = medicine_data.get("name", self.name)
         self.description = medicine_data.get("description", self.description)
         self.dose = medicine_data.get("dose", self.dose)
 
         errors = validate_medicine(
-            {"name": self.name, "description": self.description, "dose": self.dose}
+            {
+                "name": self.name,
+                "description": self.description,
+                "dose": self.dose,
+            },
         )
 
         if len(errors.keys()) > 0:

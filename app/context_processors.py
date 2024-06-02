@@ -13,6 +13,11 @@ links = [
 
 
 def navbar(request):
+    """
+    Generates a navigation bar with active link indicators.
+    This function processes a list of navigation links and marks the current link as active based on the request path.
+
+    """
     def add_active(link):
         copy = link.copy()
 

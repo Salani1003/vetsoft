@@ -1,19 +1,25 @@
+# Imports de módulos estándar de Python
 from datetime import datetime, timedelta
 
+# Imports de terceros
 from django.shortcuts import reverse
-from django.test import Client as DjangoClient
 from django.test import TestCase
 
+# Imports de módulos locales o del propio proyecto
 from app.models import Client, Medicine, Pet, Provider
 
 
 class HomePageTest(TestCase):
+    """ "Test the home page."""
+
     def test_use_home_template(self):
         response = self.client.get(reverse("home"))
         self.assertTemplateUsed(response, "home.html")
 
 
 class ClientsTest(TestCase):
+    """Test the clients model integration"""
+
     def test_repo_use_repo_template(self):
         response = self.client.get(reverse("clients_repo"))
         self.assertTemplateUsed(response, "clients/repository.html")
@@ -100,6 +106,8 @@ class ClientsTest(TestCase):
 
 
 class MedicineTest(TestCase):
+    """Test the medicines model integration"""
+
     def test_repo_use_repo_template(self):
         response = self.client.get(reverse("medicines_repo"))
         self.assertTemplateUsed(response, "medicines/repository.html")
@@ -138,7 +146,8 @@ class MedicineTest(TestCase):
 
         self.assertContains(response, "Por favor ingrese un nombre del medicamento.")
         self.assertContains(
-            response, "Por favor ingrese la descripción del medicamento."
+            response,
+            "Por favor ingrese la descripción del medicamento.",
         )
         self.assertContains(response, "Por favor ingrese la dosis del medicamento.")
 
@@ -183,6 +192,8 @@ class MedicineTest(TestCase):
 
 
 class ProductTest(TestCase):
+    """Test the product model"""
+
     def test_zero_price_validation(self):
         response = self.client.post(
             reverse("products_form"),
@@ -207,6 +218,8 @@ class ProductTest(TestCase):
 
 
 class PetIntegrationTest(TestCase):
+    """Test the pets models."""
+
     def setUp(self):
         self.example_client = Client.objects.create(
             name="Juan Sebastián Veron",
@@ -247,6 +260,8 @@ class PetIntegrationTest(TestCase):
 
 
 class ProviderIntegrationTest(TestCase):
+    """Test the providers model integration"""
+
     def test_repo_use_repo_template(self):
         response = self.client.get(reverse("providers_repo"))
         self.assertTemplateUsed(response, "providers/repository.html")

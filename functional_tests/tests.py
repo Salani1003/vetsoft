@@ -14,11 +14,14 @@ slow_mo = os.environ.get("SLOW_MO", 0)
 
 
 class PlaywrightTestCase(StaticLiveServerTestCase):
+    """Base test case for Playwright tests."""
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         cls.browser: Browser = playwright.firefox.launch(
-            headless=headless, slow_mo=int(slow_mo)
+            headless=headless,
+            slow_mo=int(slow_mo),
         )
 
     @classmethod
@@ -36,6 +39,8 @@ class PlaywrightTestCase(StaticLiveServerTestCase):
 
 
 class HomeTestCase(PlaywrightTestCase):
+    """Test case for home page."""
+
     def test_should_have_navbar_with_links(self):
         self.page.goto(self.live_server_url)
 
@@ -62,6 +67,8 @@ class HomeTestCase(PlaywrightTestCase):
 
 
 class ClientsRepoTestCase(PlaywrightTestCase):
+    """Test case for clients repository."""
+
     def test_should_show_message_if_table_is_empty(self):
         self.page.goto(f"{self.live_server_url}{reverse('clients_repo')}")
 
@@ -100,7 +107,9 @@ class ClientsRepoTestCase(PlaywrightTestCase):
         self.page.goto(f"{self.live_server_url}{reverse('clients_repo')}")
 
         add_client_action = self.page.get_by_role(
-            "link", name="Nuevo cliente", exact=False
+            "link",
+            name="Nuevo cliente",
+            exact=False,
         )
         expect(add_client_action).to_have_attribute("href", reverse("clients_form"))
 
@@ -116,7 +125,8 @@ class ClientsRepoTestCase(PlaywrightTestCase):
 
         edit_action = self.page.get_by_role("link", name="Editar")
         expect(edit_action).to_have_attribute(
-            "href", reverse("clients_edit", kwargs={"id": client.id})
+            "href",
+            reverse("clients_edit", kwargs={"id": client.id}),
         )
 
     def test_should_show_client_delete_action(self):
@@ -130,7 +140,8 @@ class ClientsRepoTestCase(PlaywrightTestCase):
         self.page.goto(f"{self.live_server_url}{reverse('clients_repo')}")
 
         edit_form = self.page.get_by_role(
-            "form", name="Formulario de eliminación de cliente"
+            "form",
+            name="Formulario de eliminación de cliente",
         )
         client_id_input = edit_form.locator("input[name=client_id]")
 
@@ -166,6 +177,8 @@ class ClientsRepoTestCase(PlaywrightTestCase):
 
 
 class ClientCreateEditTestCase(PlaywrightTestCase):
+    """Test case for clients creation and edition."""
+
     def test_should_be_able_to_create_a_new_client(self):
         self.page.goto(f"{self.live_server_url}{reverse('clients_form')}")
 
@@ -203,11 +216,11 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
 
         expect(self.page.get_by_text("Por favor ingrese un nombre")).not_to_be_visible()
         expect(
-            self.page.get_by_text("Por favor ingrese un teléfono")
+            self.page.get_by_text("Por favor ingrese un teléfono"),
         ).not_to_be_visible()
 
         expect(
-            self.page.get_by_text("Por favor ingrese un email valido")
+            self.page.get_by_text("Por favor ingrese un email valido"),
         ).to_be_visible()
 
     def test_should_be_able_to_edit_a_client(self):
@@ -240,11 +253,14 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
 
         edit_action = self.page.get_by_role("link", name="Editar")
         expect(edit_action).to_have_attribute(
-            "href", reverse("clients_edit", kwargs={"id": client.id})
+            "href",
+            reverse("clients_edit", kwargs={"id": client.id}),
         )
 
 
 class ProductCreateEditTestCase(PlaywrightTestCase):
+    """Test case for products creation and edition."""
+
     def test_should_not_be_able_to_create_a_product_with_negative_or_zero_price(self):
         self.page.goto(f"{self.live_server_url}{reverse('products_form')}")
 
@@ -257,7 +273,7 @@ class ProductCreateEditTestCase(PlaywrightTestCase):
         self.page.get_by_role("button", name="Guardar").click()
 
         expect(
-            self.page.get_by_text("Por favor ingrese un precio mayor a 0.")
+            self.page.get_by_text("Por favor ingrese un precio mayor a 0."),
         ).to_be_visible()
 
         self.page.get_by_label("Precio").fill("-10")
@@ -265,11 +281,13 @@ class ProductCreateEditTestCase(PlaywrightTestCase):
         self.page.get_by_role("button", name="Guardar").click()
 
         expect(
-            self.page.get_by_text("Por favor ingrese un precio mayor a 0.")
+            self.page.get_by_text("Por favor ingrese un precio mayor a 0."),
         ).to_be_visible()
 
 
 class MedicineCreateEditTestCase(PlaywrightTestCase):
+    """Test case for medicines creation and edition."""
+
     def test_should_not_be_able_to_create_a_new_medicine_whit_invalid_data(self):
         self.page.goto(f"{self.live_server_url}{reverse('medicines_form')}")
 
@@ -278,13 +296,13 @@ class MedicineCreateEditTestCase(PlaywrightTestCase):
         self.page.get_by_role("button", name="Guardar").click()
 
         expect(
-            self.page.get_by_text("Por favor ingrese un nombre del medicamento.")
+            self.page.get_by_text("Por favor ingrese un nombre del medicamento."),
         ).to_be_visible()
         expect(
-            self.page.get_by_text("Por favor ingrese la descripción del medicamento.")
+            self.page.get_by_text("Por favor ingrese la descripción del medicamento."),
         ).to_be_visible()
         expect(
-            self.page.get_by_text("Por favor ingrese la dosis del medicamento.")
+            self.page.get_by_text("Por favor ingrese la dosis del medicamento."),
         ).to_be_visible()
 
     def test_should_be_able_to_create_a_new_medicine(self):
@@ -304,7 +322,9 @@ class MedicineCreateEditTestCase(PlaywrightTestCase):
 
     def test_should_be_able_to_edit_a_medicine(self):
         medicine = Medicine.objects.create(
-            name="Ivermectina", description="Antiparasitario", dose=1
+            name="Ivermectina",
+            description="Antiparasitario",
+            dose=1,
         )
 
         path = reverse("medicines_edit", kwargs={"id": medicine.id})
@@ -326,12 +346,15 @@ class MedicineCreateEditTestCase(PlaywrightTestCase):
 
         edit_action = self.page.get_by_role("link", name="Editar")
         expect(edit_action).to_have_attribute(
-            "href", reverse("medicines_edit", kwargs={"id": medicine.id})
+            "href",
+            reverse("medicines_edit", kwargs={"id": medicine.id}),
         )
 
     def test_should_not_be_able_to_edit_a_medicine_whit_dose_gratter_than_10(self):
         medicine = Medicine.objects.create(
-            name="Ivermectina", description="Antiparasitario", dose=1
+            name="Ivermectina",
+            description="Antiparasitario",
+            dose=1,
         )
 
         path = reverse("medicines_edit", kwargs={"id": medicine.id})
@@ -342,12 +365,14 @@ class MedicineCreateEditTestCase(PlaywrightTestCase):
         self.page.get_by_role("button", name="Guardar").click()
 
         expect(
-            self.page.get_by_text("La dosis debe estar entre 1 y 10.")
+            self.page.get_by_text("La dosis debe estar entre 1 y 10."),
         ).to_be_visible()
 
     def test_should_not_be_able_to_edit_a_medicine_whit_dose_lower_than_1(self):
         medicine = Medicine.objects.create(
-            name="Ivermectina", description="Antiparasitario", dose=1
+            name="Ivermectina",
+            description="Antiparasitario",
+            dose=1,
         )
 
         path = reverse("medicines_edit", kwargs={"id": medicine.id})
@@ -358,7 +383,7 @@ class MedicineCreateEditTestCase(PlaywrightTestCase):
         self.page.get_by_role("button", name="Guardar").click()
 
         expect(
-            self.page.get_by_text("La dosis debe estar entre 1 y 10.")
+            self.page.get_by_text("La dosis debe estar entre 1 y 10."),
         ).to_be_visible()
 
     def test_should_response_with_404_status_if_medicine_doesnt_exists(self):
@@ -367,7 +392,9 @@ class MedicineCreateEditTestCase(PlaywrightTestCase):
 
     def test_should_be_able_to_delete_a_medicine(self):
         Medicine.objects.create(
-            name="Ivermectina", description="Antiparasitario", dose=1
+            name="Ivermectina",
+            description="Antiparasitario",
+            dose=1,
         )
 
         self.page.goto(f"{self.live_server_url}{reverse('medicines_repo')}")
@@ -387,10 +414,16 @@ class MedicineCreateEditTestCase(PlaywrightTestCase):
 
     def test_should_show_medicines_data(self):
         Medicine.objects.create(
-            name="Ivermectina", description="Antiparasitario", dose=1
+            name="Ivermectina",
+            description="Antiparasitario",
+            dose=1,
         )
 
-        Medicine.objects.create(name="Paracetamol", description="Analgésico", dose=5)
+        Medicine.objects.create(
+            name="Paracetamol",
+            description="Analgésico",
+            dose=5,
+        )
 
         self.page.goto(f"{self.live_server_url}{reverse('medicines_repo')}")
 
@@ -404,6 +437,8 @@ class MedicineCreateEditTestCase(PlaywrightTestCase):
 
 
 class PetCreateEditTestCase(PlaywrightTestCase):
+    """Test case for pets creation and edition."""
+
     def test_should_not_be_able_to_create_pet_with_birthday_today(self):
         self.page.goto(f"{self.live_server_url}{reverse('pets_form')}")
 
@@ -423,7 +458,7 @@ class PetCreateEditTestCase(PlaywrightTestCase):
                 "phone": "54221555232",
                 "address": "13 y 44",
                 "email": "email@hotmail.com",
-            }
+            },
         )
         self.page.goto(f"{self.live_server_url}{reverse('pets_form')}")
 
@@ -440,6 +475,8 @@ class PetCreateEditTestCase(PlaywrightTestCase):
 
 
 class ProviderCreateEditTestCase(PlaywrightTestCase):
+    """Test case for providers creation and edition."""
+
     def test_should_not_be_able_to_create_a_provider_with_invalid_data(self):
         self.page.goto(f"{self.live_server_url}{reverse('providers_form')}")
 
@@ -470,7 +507,9 @@ class ProviderCreateEditTestCase(PlaywrightTestCase):
 
     def test_should_be_able_to_edit_a_provider(self):
         provider = Provider.objects.create(
-            name="Proveedor  1 SA", email="proveedor1@gmail.com", address="brandsen 159"
+            name="Proveedor  1 SA",
+            email="proveedor1@gmail.com",
+            address="brandsen 159",
         )
         path = reverse("providers_edit", kwargs={"id": provider.id})
         self.page.goto(f"{self.live_server_url}{path}")
@@ -491,12 +530,15 @@ class ProviderCreateEditTestCase(PlaywrightTestCase):
 
         edit_action = self.page.get_by_role("link", name="Editar")
         expect(edit_action).to_have_attribute(
-            "href", reverse("providers_edit", kwargs={"id": provider.id})
+            "href",
+            reverse("providers_edit", kwargs={"id": provider.id}),
         )
 
     def test_should_be_able_to_delete_a_provider(self):
         Provider.objects.create(
-            name="Servicios Veterinarios", email="email@gmail.com", address="13 y 44"
+            name="Servicios Veterinarios",
+            email="email@gmail.com",
+            address="13 y 44",
         )
 
         self.page.goto(f"{self.live_server_url}{reverse('providers_repo')}")
