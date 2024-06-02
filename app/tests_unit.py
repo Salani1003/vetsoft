@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from django.test import TestCase
 
-from app.models import Client, Pet, Product, Medicine,Provider
+from app.models import Client, Medicine, Pet, Product, Provider
 
 
 class ClientModelTest(TestCase):
@@ -10,7 +10,7 @@ class ClientModelTest(TestCase):
         Client.save_client(
             {
                 "name": "Juan Sebastian Veron",
-                "phone": "221555232",
+                "phone": "54221555232",
                 "address": "13 y 44",
                 "email": "brujita75@hotmail.com",
             }
@@ -19,7 +19,7 @@ class ClientModelTest(TestCase):
         self.assertEqual(len(clients), 1)
 
         self.assertEqual(clients[0].name, "Juan Sebastian Veron")
-        self.assertEqual(clients[0].phone, "221555232")
+        self.assertEqual(clients[0].phone, "54221555232")
         self.assertEqual(clients[0].address, "13 y 44")
         self.assertEqual(clients[0].email, "brujita75@hotmail.com")
 
@@ -27,14 +27,14 @@ class ClientModelTest(TestCase):
         Client.save_client(
             {
                 "name": "Juan Sebastian Veron",
-                "phone": "221555232",
+                "phone": "54221555232",
                 "address": "13 y 44",
                 "email": "brujita75@hotmail.com",
             }
         )
         client = Client.objects.get(pk=1)
 
-        self.assertEqual(client.phone, "221555232")
+        self.assertEqual(client.phone, "54221555232")
 
         client.update_client({"phone": "221555233"})
 
@@ -46,20 +46,33 @@ class ClientModelTest(TestCase):
         Client.save_client(
             {
                 "name": "Juan Sebastian Veron",
-                "phone": "221555232",
+                "phone": "54221555232",
                 "address": "13 y 44",
                 "email": "brujita75@hotmail.com",
             }
         )
         client = Client.objects.get(pk=1)
 
-        self.assertEqual(client.phone, "221555232")
+        self.assertEqual(client.phone, "54221555232")
 
         client.update_client({"phone": ""})
 
         client_updated = Client.objects.get(pk=1)
 
-        self.assertEqual(client_updated.phone, "221555232")
+        self.assertEqual(client_updated.phone, "54221555232")
+
+    def test_phone_must_start_with_54(self):
+        saved, errors = Client.save_client(
+            {
+                "name": "Juan Sebastian Veron",
+                "phone": "221555233",
+                "address": "13 y 44",
+                "email": "brujita75@hotmail.com",
+            }
+        )
+        self.assertFalse(saved)
+        self.assertEqual(errors["phone"], "El telefono debe comenzar con 54")
+
 
 class MedicineModelTest(TestCase):
     def test_can_create_and_get_medicine(self):
@@ -98,15 +111,14 @@ class MedicineModelTest(TestCase):
         )
         self.assertFalse(saved)
         self.assertEqual(errors["dose"], "La dosis debe estar entre 1 y 10.")
-        
-                
+
 
 class PetModelTest(TestCase):
     def test_cant_create_pet_with_birthday_today(self):
         Client.save_client(
             {
                 "name": "Juan Sebastian Veron",
-                "phone": "221555232",
+                "phone": "54221555232",
                 "address": "13 y 44",
                 "email": "brujita75@hotmail.com",
             }
@@ -125,7 +137,7 @@ class PetModelTest(TestCase):
         Client.save_client(
             {
                 "name": "Juan Sebastian Veron",
-                "phone": "221555232",
+                "phone": "54221555232",
                 "address": "13 y 44",
                 "email": "brujita75@hotmail.com",
             }
@@ -195,33 +207,31 @@ class ProductModelTest(TestCase):
 
 
 class ProviderModelTest(TestCase):
-    
     def test_can_create_provider(self):
-        result=Provider.save_provider(
+        result = Provider.save_provider(
             {
                 "name": "Servicios Veterinarios SA",
                 "email": "Serviciosveterinarios@gmail.com",
                 "address": "Calle 13 n°1587",
             }
-        )       
-        
+        )
+
         self.assertEqual(result, (True, None))
 
     def test_cant_create_provider_without_name(self):
-        result=Provider.save_provider(
+        result = Provider.save_provider(
             {
-                "name":"",
+                "name": "",
                 "email": "Serviciosveterinarios@gmail.com",
                 "address": "Calle 13 n°1587",
             }
         )
-        self.assertEqual(
-            result, (False, {"name": "Por favor ingrese un nombre"})
-        )
+        self.assertEqual(result, (False, {"name": "Por favor ingrese un nombre"}))
+
     def test_cant_create_provider_with_invalid_email(self):
-        result=Provider.save_provider(
+        result = Provider.save_provider(
             {
-                "name":"Servicios Veterinarios SA",
+                "name": "Servicios Veterinarios SA",
                 "email": "Serviciosveterinariosgmail.com",
                 "address": "Calle 13 n°1587",
             }
@@ -231,9 +241,9 @@ class ProviderModelTest(TestCase):
         )
 
     def test_cant_create_provider_without_address(self):
-        result=Provider.save_provider(
+        result = Provider.save_provider(
             {
-                "name":"Servicios Veterinarios SA",
+                "name": "Servicios Veterinarios SA",
                 "email": "Serviciosveterinarios@gmail.com",
                 "address": "",
             }

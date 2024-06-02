@@ -15,6 +15,8 @@ def validate_client(data):
 
     if phone == "":
         errors["phone"] = "Por favor ingrese un teléfono"
+    elif phone[:2] != "54":
+        errors["phone"] = "El telefono debe comenzar con 54"
 
     if email == "":
         errors["email"] = "Por favor ingrese un email"
@@ -92,7 +94,7 @@ def validate_provider(data):
         errors["email"] = "Por favor ingrese un email valido"
     if address == "":
         errors["address"] = "Por favor ingrese una dirección"
-    
+
     return errors
 
 
@@ -159,7 +161,6 @@ def validate_medicine(data):
         dose_value = float(dose)
         if dose_value < 1.0 or dose_value > 10.0:
             errors["dose"] = "La dosis debe estar entre 1 y 10."
-        
 
     return errors
 
@@ -266,7 +267,7 @@ class Vet(models.Model):
 class Provider(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
-    address= models.CharField(max_length=100)
+    address = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
@@ -306,7 +307,6 @@ class Product(models.Model):
     def save_product(cls, product_data):
         errors = validate_product(product_data)
         if len(errors.keys()) > 0:
-            
             return False, errors
 
         Product.objects.create(
@@ -367,7 +367,6 @@ class Medicine(models.Model):
     def __str__(self):
         return self.name
 
-
     @classmethod
     def save_medicine(cls, medicine_data):
         errors = validate_medicine(medicine_data)
@@ -383,22 +382,17 @@ class Medicine(models.Model):
 
         return True, None
 
-
     def update_medicine(self, medicine_data):
         self.name = medicine_data.get("name", self.name)
         self.description = medicine_data.get("description", self.description)
         self.dose = medicine_data.get("dose", self.dose)
 
-        errors = validate_medicine({
-            "name": self.name,
-            "description": self.description,
-            "dose": self.dose
-        })
+        errors = validate_medicine(
+            {"name": self.name, "description": self.description, "dose": self.dose}
+        )
 
         if len(errors.keys()) > 0:
             return False, errors
 
         self.save()
         return True, None
-        
-    

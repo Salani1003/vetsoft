@@ -5,7 +5,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
 from playwright.sync_api import Browser, expect, sync_playwright
 
-from app.models import Client, Medicine,Provider
+from app.models import Client, Medicine, Provider
 
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 playwright = sync_playwright().start()
@@ -71,7 +71,7 @@ class ClientsRepoTestCase(PlaywrightTestCase):
         Client.objects.create(
             name="Juan Sebastián Veron",
             address="13 y 44",
-            phone="221555232",
+            phone="54221555232",
             email="brujita75@hotmail.com",
         )
 
@@ -88,7 +88,7 @@ class ClientsRepoTestCase(PlaywrightTestCase):
 
         expect(self.page.get_by_text("Juan Sebastián Veron")).to_be_visible()
         expect(self.page.get_by_text("13 y 44")).to_be_visible()
-        expect(self.page.get_by_text("221555232")).to_be_visible()
+        expect(self.page.get_by_text("54221555232")).to_be_visible()
         expect(self.page.get_by_text("brujita75@hotmail.com")).to_be_visible()
 
         expect(self.page.get_by_text("Guido Carrillo")).to_be_visible()
@@ -108,7 +108,7 @@ class ClientsRepoTestCase(PlaywrightTestCase):
         client = Client.objects.create(
             name="Juan Sebastián Veron",
             address="13 y 44",
-            phone="221555232",
+            phone="54221555232",
             email="brujita75@hotmail.com",
         )
 
@@ -123,7 +123,7 @@ class ClientsRepoTestCase(PlaywrightTestCase):
         client = Client.objects.create(
             name="Juan Sebastián Veron",
             address="13 y 44",
-            phone="221555232",
+            phone="54221555232",
             email="brujita75@hotmail.com",
         )
 
@@ -144,7 +144,7 @@ class ClientsRepoTestCase(PlaywrightTestCase):
         Client.objects.create(
             name="Juan Sebastián Veron",
             address="13 y 44",
-            phone="221555232",
+            phone="54221555232",
             email="brujita75@hotmail.com",
         )
 
@@ -172,14 +172,14 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
         expect(self.page.get_by_role("form")).to_be_visible()
 
         self.page.get_by_label("Nombre").fill("Juan Sebastián Veron")
-        self.page.get_by_label("Teléfono").fill("221555232")
+        self.page.get_by_label("Teléfono").fill("54221555232")
         self.page.get_by_label("Email").fill("brujita75@hotmail.com")
         self.page.get_by_label("Dirección").fill("13 y 44")
 
         self.page.get_by_role("button", name="Guardar").click()
 
         expect(self.page.get_by_text("Juan Sebastián Veron")).to_be_visible()
-        expect(self.page.get_by_text("221555232")).to_be_visible()
+        expect(self.page.get_by_text("54221555232")).to_be_visible()
         expect(self.page.get_by_text("brujita75@hotmail.com")).to_be_visible()
         expect(self.page.get_by_text("13 y 44")).to_be_visible()
 
@@ -195,7 +195,7 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
         expect(self.page.get_by_text("Por favor ingrese un email")).to_be_visible()
 
         self.page.get_by_label("Nombre").fill("Juan Sebastián Veron")
-        self.page.get_by_label("Teléfono").fill("221555232")
+        self.page.get_by_label("Teléfono").fill("54221555232")
         self.page.get_by_label("Email").fill("brujita75")
         self.page.get_by_label("Dirección").fill("13 y 44")
 
@@ -214,7 +214,7 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
         client = Client.objects.create(
             name="Juan Sebastián Veron",
             address="13 y 44",
-            phone="221555232",
+            phone="54221555232",
             email="brujita75@hotmail.com",
         )
 
@@ -230,7 +230,7 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
 
         expect(self.page.get_by_text("Juan Sebastián Veron")).not_to_be_visible()
         expect(self.page.get_by_text("13 y 44")).not_to_be_visible()
-        expect(self.page.get_by_text("221555232")).not_to_be_visible()
+        expect(self.page.get_by_text("54221555232")).not_to_be_visible()
         expect(self.page.get_by_text("brujita75@hotmail.com")).not_to_be_visible()
 
         expect(self.page.get_by_text("Guido Carrillo")).to_be_visible()
@@ -268,17 +268,24 @@ class ProductCreateEditTestCase(PlaywrightTestCase):
             self.page.get_by_text("Por favor ingrese un precio mayor a 0.")
         ).to_be_visible()
 
+
 class MedicineCreateEditTestCase(PlaywrightTestCase):
     def test_should_not_be_able_to_create_a_new_medicine_whit_invalid_data(self):
         self.page.goto(f"{self.live_server_url}{reverse('medicines_form')}")
 
         expect(self.page.get_by_role("form")).to_be_visible()
-    
+
         self.page.get_by_role("button", name="Guardar").click()
 
-        expect(self.page.get_by_text("Por favor ingrese un nombre del medicamento.")).to_be_visible()
-        expect(self.page.get_by_text("Por favor ingrese la descripción del medicamento.")).to_be_visible()
-        expect(self.page.get_by_text("Por favor ingrese la dosis del medicamento.")).to_be_visible()
+        expect(
+            self.page.get_by_text("Por favor ingrese un nombre del medicamento.")
+        ).to_be_visible()
+        expect(
+            self.page.get_by_text("Por favor ingrese la descripción del medicamento.")
+        ).to_be_visible()
+        expect(
+            self.page.get_by_text("Por favor ingrese la dosis del medicamento.")
+        ).to_be_visible()
 
     def test_should_be_able_to_create_a_new_medicine(self):
         self.page.goto(f"{self.live_server_url}{reverse('medicines_form')}")
@@ -297,9 +304,7 @@ class MedicineCreateEditTestCase(PlaywrightTestCase):
 
     def test_should_be_able_to_edit_a_medicine(self):
         medicine = Medicine.objects.create(
-            name="Ivermectina",
-            description="Antiparasitario",
-            dose=1
+            name="Ivermectina", description="Antiparasitario", dose=1
         )
 
         path = reverse("medicines_edit", kwargs={"id": medicine.id})
@@ -326,37 +331,35 @@ class MedicineCreateEditTestCase(PlaywrightTestCase):
 
     def test_should_not_be_able_to_edit_a_medicine_whit_dose_gratter_than_10(self):
         medicine = Medicine.objects.create(
-            name="Ivermectina",
-            description="Antiparasitario",
-            dose=1
+            name="Ivermectina", description="Antiparasitario", dose=1
         )
 
         path = reverse("medicines_edit", kwargs={"id": medicine.id})
         self.page.goto(f"{self.live_server_url}{path}")
 
-        
         self.page.get_by_label("Dosis").fill("30")
 
         self.page.get_by_role("button", name="Guardar").click()
 
-        expect(self.page.get_by_text("La dosis debe estar entre 1 y 10.")).to_be_visible()
+        expect(
+            self.page.get_by_text("La dosis debe estar entre 1 y 10.")
+        ).to_be_visible()
 
     def test_should_not_be_able_to_edit_a_medicine_whit_dose_lower_than_1(self):
         medicine = Medicine.objects.create(
-            name="Ivermectina",
-            description="Antiparasitario",
-            dose=1
+            name="Ivermectina", description="Antiparasitario", dose=1
         )
 
         path = reverse("medicines_edit", kwargs={"id": medicine.id})
         self.page.goto(f"{self.live_server_url}{path}")
 
-        
         self.page.get_by_label("Dosis").fill("0")
 
         self.page.get_by_role("button", name="Guardar").click()
 
-        expect(self.page.get_by_text("La dosis debe estar entre 1 y 10.")).to_be_visible() 
+        expect(
+            self.page.get_by_text("La dosis debe estar entre 1 y 10.")
+        ).to_be_visible()
 
     def test_should_response_with_404_status_if_medicine_doesnt_exists(self):
         response = self.client.get(reverse("medicines_edit", kwargs={"id": 100}))
@@ -364,9 +367,7 @@ class MedicineCreateEditTestCase(PlaywrightTestCase):
 
     def test_should_be_able_to_delete_a_medicine(self):
         Medicine.objects.create(
-            name="Ivermectina",
-            description="Antiparasitario",
-            dose=1
+            name="Ivermectina", description="Antiparasitario", dose=1
         )
 
         self.page.goto(f"{self.live_server_url}{reverse('medicines_repo')}")
@@ -386,16 +387,10 @@ class MedicineCreateEditTestCase(PlaywrightTestCase):
 
     def test_should_show_medicines_data(self):
         Medicine.objects.create(
-            name="Ivermectina",
-            description="Antiparasitario",
-            dose=1
+            name="Ivermectina", description="Antiparasitario", dose=1
         )
 
-        Medicine.objects.create(
-            name="Paracetamol",
-            description="Analgésico",
-            dose=5
-        )
+        Medicine.objects.create(name="Paracetamol", description="Analgésico", dose=5)
 
         self.page.goto(f"{self.live_server_url}{reverse('medicines_repo')}")
 
@@ -407,9 +402,6 @@ class MedicineCreateEditTestCase(PlaywrightTestCase):
         expect(self.page.get_by_text("Analgésico")).to_be_visible()
         expect(self.page.get_by_text("5.0")).to_be_visible()
 
-
-
-    
 
 class PetCreateEditTestCase(PlaywrightTestCase):
     def test_should_not_be_able_to_create_pet_with_birthday_today(self):
@@ -428,7 +420,7 @@ class PetCreateEditTestCase(PlaywrightTestCase):
         Client.save_client(
             {
                 "name": "duenio 1",
-                "phone": "221555232",
+                "phone": "54221555232",
                 "address": "13 y 44",
                 "email": "email@hotmail.com",
             }
@@ -446,6 +438,7 @@ class PetCreateEditTestCase(PlaywrightTestCase):
         expect(self.page.locator("tbody")).to_contain_text("Pocchi")
         expect(self.page.locator("tbody")).to_contain_text("Shiba")
 
+
 class ProviderCreateEditTestCase(PlaywrightTestCase):
     def test_should_not_be_able_to_create_a_provider_with_invalid_data(self):
         self.page.goto(f"{self.live_server_url}{reverse('providers_form')}")
@@ -459,7 +452,7 @@ class ProviderCreateEditTestCase(PlaywrightTestCase):
         self.page.get_by_role("button", name="Guardar").click()
 
         expect(self.page.get_by_text("Por favor ingrese una dirección")).to_be_visible()
-    
+
     def test_should_be_able_to_create_a_provider(self):
         self.page.goto(f"{self.live_server_url}{reverse('providers_form')}")
 
@@ -475,44 +468,35 @@ class ProviderCreateEditTestCase(PlaywrightTestCase):
         expect(self.page.get_by_text("email@gmail.com")).to_be_visible()
         expect(self.page.get_by_text("13 y 44")).to_be_visible()
 
-
     def test_should_be_able_to_edit_a_provider(self):
         provider = Provider.objects.create(
-            name="Proveedor  1 SA",
-            email="proveedor1@gmail.com",
-            address="brandsen 159"
+            name="Proveedor  1 SA", email="proveedor1@gmail.com", address="brandsen 159"
         )
         path = reverse("providers_edit", kwargs={"id": provider.id})
         self.page.goto(f"{self.live_server_url}{path}")
-    
+
         self.page.get_by_label("Nombre").fill("Nuevo proveedor SA")
         self.page.get_by_label("Email").fill("unNuevoEmail@gmail.com")
         self.page.get_by_label("Dirección").fill("primera junta 659")
-        
 
         self.page.get_by_role("button", name="Guardar").click()
-    
 
         expect(self.page.get_by_text("Proveedor  1 SA")).not_to_be_visible()
         expect(self.page.get_by_text("proveedor1@gmail.com")).not_to_be_visible()
         expect(self.page.get_by_text("brandsen 159")).not_to_be_visible()
-    
-        
+
         expect(self.page.get_by_text("Nuevo proveedor SA")).to_be_visible()
         expect(self.page.get_by_text("unNuevoEmail@gmail.com")).to_be_visible()
         expect(self.page.get_by_text("primera junta 659")).to_be_visible()
-    
+
         edit_action = self.page.get_by_role("link", name="Editar")
         expect(edit_action).to_have_attribute(
             "href", reverse("providers_edit", kwargs={"id": provider.id})
         )
 
     def test_should_be_able_to_delete_a_provider(self):
-  
         Provider.objects.create(
-            name="Servicios Veterinarios",
-            email="email@gmail.com",
-            address="13 y 44"
+            name="Servicios Veterinarios", email="email@gmail.com", address="13 y 44"
         )
 
         self.page.goto(f"{self.live_server_url}{reverse('providers_repo')}")
@@ -520,11 +504,11 @@ class ProviderCreateEditTestCase(PlaywrightTestCase):
 
         def is_delete_response(response):
             return response.url.find(reverse("providers_delete"))
-        
+
         with self.page.expect_response(is_delete_response) as response_info:
             self.page.get_by_role("button", name="Eliminar").click()
-        
-        response= response_info.value
+
+        response = response_info.value
         self.assertTrue(response.status < 400)
 
         expect(self.page.get_by_text("Servicios Veterinarios")).not_to_be_visible()

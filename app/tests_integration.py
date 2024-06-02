@@ -4,7 +4,7 @@ from django.shortcuts import reverse
 from django.test import Client as DjangoClient
 from django.test import TestCase
 
-from app.models import Client, Pet, Medicine,Provider
+from app.models import Client, Medicine, Pet, Provider
 
 
 class HomePageTest(TestCase):
@@ -31,7 +31,7 @@ class ClientsTest(TestCase):
             reverse("clients_form"),
             data={
                 "name": "Juan Sebastian Veron",
-                "phone": "221555232",
+                "phone": "54221555232",
                 "address": "13 y 44",
                 "email": "brujita75@hotmail.com",
             },
@@ -40,7 +40,7 @@ class ClientsTest(TestCase):
         self.assertEqual(len(clients), 1)
 
         self.assertEqual(clients[0].name, "Juan Sebastian Veron")
-        self.assertEqual(clients[0].phone, "221555232")
+        self.assertEqual(clients[0].phone, "54221555232")
         self.assertEqual(clients[0].address, "13 y 44")
         self.assertEqual(clients[0].email, "brujita75@hotmail.com")
 
@@ -65,7 +65,7 @@ class ClientsTest(TestCase):
             reverse("clients_form"),
             data={
                 "name": "Juan Sebastian Veron",
-                "phone": "221555232",
+                "phone": "54221555232",
                 "address": "13 y 44",
                 "email": "brujita75",
             },
@@ -77,7 +77,7 @@ class ClientsTest(TestCase):
         client = Client.objects.create(
             name="Juan Sebastián Veron",
             address="13 y 44",
-            phone="221555232",
+            phone="54221555232",
             email="brujita75@hotmail.com",
         )
 
@@ -97,6 +97,7 @@ class ClientsTest(TestCase):
         self.assertEqual(editedClient.phone, client.phone)
         self.assertEqual(editedClient.address, client.address)
         self.assertEqual(editedClient.email, client.email)
+
 
 class MedicineTest(TestCase):
     def test_repo_use_repo_template(self):
@@ -136,7 +137,9 @@ class MedicineTest(TestCase):
         )
 
         self.assertContains(response, "Por favor ingrese un nombre del medicamento.")
-        self.assertContains(response, "Por favor ingrese la descripción del medicamento.")
+        self.assertContains(
+            response, "Por favor ingrese la descripción del medicamento."
+        )
         self.assertContains(response, "Por favor ingrese la dosis del medicamento.")
 
     def test_edit_medicine_with_valid_data(self):
@@ -179,7 +182,6 @@ class MedicineTest(TestCase):
         self.assertContains(response, "La dosis debe estar entre 1 y 10.")
 
 
-
 class ProductTest(TestCase):
     def test_zero_price_validation(self):
         response = self.client.post(
@@ -209,7 +211,7 @@ class PetIntegrationTest(TestCase):
         self.example_client = Client.objects.create(
             name="Juan Sebastián Veron",
             address="13 y 44",
-            phone="221555232",
+            phone="54221555232",
             email="brujita75@hotmail.com",
         )
 
@@ -243,6 +245,7 @@ class PetIntegrationTest(TestCase):
         self.assertEqual(Pet.objects.count(), 1)
         self.assertEqual(Pet.objects.first().name, "Buddy")
 
+
 class ProviderIntegrationTest(TestCase):
     def test_repo_use_repo_template(self):
         response = self.client.get(reverse("providers_repo"))
@@ -262,8 +265,8 @@ class ProviderIntegrationTest(TestCase):
             data={
                 "name": "Laboratorio Roemmers",
                 "address": "13 y 44",
-                "email": "laboratorioRoemmers@gmail.com"
-                }
+                "email": "laboratorioRoemmers@gmail.com",
+            },
         )
         providers = Provider.objects.all()
         self.assertEqual(response.status_code, 302)
@@ -271,7 +274,7 @@ class ProviderIntegrationTest(TestCase):
         self.assertEqual(providers[0].name, "Laboratorio Roemmers")
         self.assertEqual(providers[0].address, "13 y 44")
         self.assertEqual(providers[0].email, "laboratorioRoemmers@gmail.com")
-        self.assertRedirects(response,reverse("providers_repo"))
+        self.assertRedirects(response, reverse("providers_repo"))
 
     def test_validation_errors_create_provider(self):
         response = self.client.post(
@@ -284,10 +287,10 @@ class ProviderIntegrationTest(TestCase):
         self.assertContains(response, "Por favor ingrese un email")
 
     def test_edit_provider_with_valid_data(self):
-        provider=Provider.objects.create(
-                name= "Servicios Veterinarios SA",
-                email= "Serviciosveterinarios@gmail.com",
-                address= "Calle 13 n°1587",
+        provider = Provider.objects.create(
+            name="Servicios Veterinarios SA",
+            email="Serviciosveterinarios@gmail.com",
+            address="Calle 13 n°1587",
         )
 
         response = self.client.post(
@@ -307,7 +310,7 @@ class ProviderIntegrationTest(TestCase):
     def test_should_response_with_404_status_if_provider_doesnt_exists(self):
         response = self.client.get(reverse("providers_edit", kwargs={"id": 100}))
         self.assertEqual(response.status_code, 404)
-    
+
     def test_validation_invalid_email(self):
         response = self.client.post(
             reverse("providers_form"),
@@ -334,10 +337,10 @@ class ProviderIntegrationTest(TestCase):
 
     def test_edit_provider_without_name(self):
         # If we want to edit a provider without a name, it should keep the previous name.
-        provider=Provider.objects.create(
-                name= "Servicios Veterinarios SA",
-                email= "Serviciosveterinarios@gmail.com",
-                address= "Calle 13 n°1587",
+        provider = Provider.objects.create(
+            name="Servicios Veterinarios SA",
+            email="Serviciosveterinarios@gmail.com",
+            address="Calle 13 n°1587",
         )
 
         response = self.client.post(
@@ -352,5 +355,3 @@ class ProviderIntegrationTest(TestCase):
         self.assertEqual(response.status_code, 302)
         editedProvider = Provider.objects.get(pk=provider.id)
         self.assertEqual(editedProvider.name, "Servicios Veterinarios SA")
-
-    
