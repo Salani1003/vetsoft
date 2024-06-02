@@ -49,7 +49,7 @@ def validate_pet(data):
     today = datetime.now().date()
     if isinstance(birthday, str) and birthday != "":
         birthday = datetime.fromisoformat(birthday).date()
-    if birthday == today:
+    if birthday >= today:
         errors["invalid_birthday"] = "Por favor ingrese una fecha de nacimiento valida."
 
     return errors
@@ -295,7 +295,6 @@ class Product(models.Model):
     def save_product(cls, product_data):
         errors = validate_product(product_data)
         if len(errors.keys()) > 0:
-            
             return False, errors
 
         Product.objects.create(

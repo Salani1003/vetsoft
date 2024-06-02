@@ -82,6 +82,25 @@ class PetModelTest(TestCase):
         )
         self.assertIn("invalid_birthday", errors)
 
+    def test_cant_create_pet_with_future_birthday(self):
+        Client.save_client(
+            {
+                "name": "Juan Sebastian Veron",
+                "phone": "221555232",
+                "address": "13 y 44",
+                "email": "brujita75@hotmail.com",
+            }
+        )
+        _, errors = Pet.save_pet(
+            {
+                "name": "Rex",
+                "breed": "Labrador",
+                "birthday": datetime.now().date() + timedelta(days=1),
+                "client": 1,
+            }
+        )
+        self.assertIn("invalid_birthday", errors)
+
     def test_can_create_pet(self):
         Client.save_client(
             {
