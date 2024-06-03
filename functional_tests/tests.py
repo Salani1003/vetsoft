@@ -179,6 +179,19 @@ class ClientsRepoTestCase(PlaywrightTestCase):
 class ClientCreateEditTestCase(PlaywrightTestCase):
     """Test case for clients creation and edition."""
 
+    def test_cant_update_to_invalid_phone(self):
+        client = Client.objects.create(
+            name="Juan Sebastián Veron",
+            address="13 y 44",
+            phone="54221555232",
+            email="brujita75@hotmail.com",
+        )
+        self.page.goto(f"{self.live_server_url}{reverse('clients_repo')}")
+        self.page.get_by_role("link", name="Editar").click()
+        self.page.get_by_label("Teléfono").fill("435345354")
+        self.page.get_by_role("button", name="Guardar").click()
+
+
     def test_should_be_able_to_create_a_new_client(self):
         self.page.goto(f"{self.live_server_url}{reverse('clients_form')}")
 
@@ -235,7 +248,7 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
         self.page.goto(f"{self.live_server_url}{path}")
 
         self.page.get_by_label("Nombre").fill("Guido Carrillo")
-        self.page.get_by_label("Teléfono").fill("221232555")
+        self.page.get_by_label("Teléfono").fill("54221232555")
         self.page.get_by_label("Email").fill("goleador@gmail.com")
         self.page.get_by_label("Dirección").fill("1 y 57")
 

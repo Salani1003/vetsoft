@@ -1,6 +1,21 @@
 from datetime import datetime
 
 from django.db import models
+from django.http import QueryDict
+
+
+def object_to_querydict(obj):
+    querydict = QueryDict("", mutable=True)
+    for attr, value in obj.__dict__.items():
+        if not attr.startswith("_"):  # Ignorar atributos privados
+            if isinstance(value, str) or isinstance(value, int):
+                querydict.update({attr: str(value)})
+            elif isinstance(value, list):
+                for item in value:
+                    querydict.appendlist(attr, str(item))
+            else:
+                querydict.appendlist(attr, str(value))
+    return querydict
 
 
 def validate_client(data):
@@ -218,8 +233,13 @@ class Client(models.Model):
         self.email = client_data.get("email", "") or self.email
         self.phone = client_data.get("phone", "") or self.phone
         self.address = client_data.get("address", "") or self.address
+        errors = validate_client(object_to_querydict(self))
+
+        if len(errors.keys()) > 0:
+            return False, errors
 
         self.save()
+        return True, None
 
 
 class Pet(models.Model):
