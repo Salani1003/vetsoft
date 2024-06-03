@@ -5,6 +5,7 @@ from django.http import QueryDict
 
 
 def object_to_querydict(obj):
+    """Converts an object to a QueryDict object."""
     querydict = QueryDict("", mutable=True)
     for attr, value in obj.__dict__.items():
         if not attr.startswith("_"):  # Ignorar atributos privados
