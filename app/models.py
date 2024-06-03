@@ -53,7 +53,7 @@ def validate_pet(data):
     today = datetime.now().date()
     if isinstance(birthday, str) and birthday != "":
         birthday = datetime.fromisoformat(birthday).date()
-    if birthday == today:
+    if birthday >= today:
         errors["invalid_birthday"] = "Por favor ingrese una fecha de nacimiento valida."
 
     return errors
