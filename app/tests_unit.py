@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 from django.test import TestCase
 
-from app.models import Client, Medicine, Pet, Product, Provider,object_to_querydict
+from app.models import Client, Medicine, Pet, Product, Provider
 
 
 class ClientModelTest(TestCase):
@@ -44,18 +44,6 @@ class ClientModelTest(TestCase):
 
         self.assertEqual(client_updated.phone, 54221555232)
 
-    def test_cant_create_client_with_invalid_name(self):
-        saved, errors = Client.save_client(
-            {
-                "name": "pepito12",
-                "phone": "54221555232",
-                "address": "13 y 44",
-                "email": "brujita75@hotmail.com",
-            },
-        )
-        self.assertFalse(saved)
-        self.assertEqual(errors["name"], "El nombre solo puede contener letras y espacios")
-    
     def test_update_client_with_error(self):
         Client.save_client(
             {
@@ -313,21 +301,3 @@ class ProviderModelTest(TestCase):
             result,
             (False, {"address": "Por favor ingrese una dirección"}),
         )
-
-class ObjectToQueryDictTest(TestCase):
-    def test_object_to_querydict(self):
-        class MyObject:
-            def __init__(self):
-                self.name = "John"
-                self.age = 30
-                self.email = "john@example.com"
-                self.city = "New York"
-
-        obj = MyObject()
-
-        query_dict = object_to_querydict(obj)
-        
-        self.assertEqual(query_dict.get("name"), "John")
-        self.assertEqual(query_dict.get("age"), "30")
-        self.assertEqual(query_dict.get("city"),"New York")
-        self.assertEqual(query_dict.get("email"), "john@example.com")

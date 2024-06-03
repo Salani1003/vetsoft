@@ -197,14 +197,14 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
 
         expect(self.page.get_by_role("form")).to_be_visible()
 
-        self.page.get_by_label("Nombre").fill("Martin Palermo")
+        self.page.get_by_label("Nombre").fill("Juan Sebastián Veron")
         self.page.get_by_label("Teléfono").fill("54221555232")
         self.page.get_by_label("Email").fill("brujita75@vetsoft.com")
         self.page.get_by_label("Dirección").fill("13 y 44")
 
         self.page.get_by_role("button", name="Guardar").click()
 
-        expect(self.page.get_by_text("Martin Palermo")).to_be_visible()
+        expect(self.page.get_by_text("Juan Sebastián Veron")).to_be_visible()
         expect(self.page.get_by_text("54221555232")).to_be_visible()
         expect(self.page.get_by_text("brujita75@vetsoft.com")).to_be_visible()
         expect(self.page.get_by_text("13 y 44")).to_be_visible()
@@ -467,7 +467,7 @@ class PetCreateEditTestCase(PlaywrightTestCase):
     def test_should_be_able_to_create_a_new_pet(self):
         Client.save_client(
             {
-                "name": "duenio",
+                "name": "duenio 1",
                 "phone": "54221555232",
                 "address": "13 y 44",
                 "email": "email@vetsoft.com",
@@ -480,7 +480,7 @@ class PetCreateEditTestCase(PlaywrightTestCase):
         self.page.get_by_label("Nombre").fill("Pocchi")
         self.page.get_by_label("Raza").fill("Shiba")
         self.page.get_by_label("Fecha de nacimiento").fill("2021-01-01")
-        self.page.get_by_label("Dueño").select_option(label="duenio")
+        self.page.get_by_label("Dueño").select_option(label="duenio 1")
         self.page.get_by_role("button", name="Guardar").click()
 
         expect(self.page.locator("tbody")).to_contain_text("Pocchi")

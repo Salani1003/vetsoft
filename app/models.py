@@ -1,4 +1,3 @@
-import re
 from datetime import datetime
 
 from django.db import models
@@ -30,8 +29,6 @@ def validate_client(data):
 
     if name == "":
         errors["name"] = "Por favor ingrese un nombre"
-    elif not re.match("^[a-zA-Z\s]+$", name):
-        errors["name"] = "El nombre solo puede contener letras y espacios"
 
     if phone == "":
         errors["phone"] = "Por favor ingrese un teléfono"
