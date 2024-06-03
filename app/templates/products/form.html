@@ -52,11 +52,12 @@
                 </div>
                 <div>
                     <label for="price" class="form-label">Precio</label>
-                    <input type="float"
+                    <input type="number"
                         id="price"
                         name="price"
                         class="form-control {% if errors.price %}is-invalid{% endif %}"
                         value="{{ product.price }}"
+                        min="0.01"
                         required/>
 
                     {% if errors.price %}
