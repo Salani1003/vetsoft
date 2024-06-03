@@ -46,7 +46,7 @@
                             value="{{ pet.id }}"
                         />
                         <button class="btn btn-outline-danger">Eliminar</button>
-                    </form>
+                    {% csrf_token %}</form>
                 </td>
             </tr>
             {% empty %}
