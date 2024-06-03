@@ -79,6 +79,19 @@ class ClientsTest(TestCase):
 
         self.assertContains(response, "Por favor ingrese un email valido")
 
+    def test_validation_invalid_name(self):
+        response = self.client.post(
+            reverse("clients_form"),
+            data={
+                "name": "Juan Sebastian Veron 123123",
+                "phone": "54221555232",
+                "address": "13 y 44",
+                "email": "brujita75@hotmail.com",
+            },
+        )
+
+        self.assertContains(response, "El nombre solo puede contener letras y espacios")
+        
     def test_edit_user_with_valid_data(self):
         client = Client.objects.create(
             name="Juan Sebastián Veron",
