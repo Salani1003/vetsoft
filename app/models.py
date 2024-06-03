@@ -1,6 +1,22 @@
 from datetime import datetime
 
 from django.db import models
+from django.http import QueryDict
+
+
+def object_to_querydict(obj):
+    """Converts an object to a QueryDict object."""
+    querydict = QueryDict("", mutable=True)
+    for attr, value in obj.__dict__.items():
+        if not attr.startswith("_"):  # Ignorar atributos privados
+            if isinstance(value, str) or isinstance(value, int):
+                querydict.update({attr: str(value)})
+            elif isinstance(value, list):
+                for item in value:
+                    querydict.appendlist(attr, str(item))
+            else:
+                querydict.appendlist(attr, str(value))
+    return querydict
 
 
 def validate_client(data):
@@ -16,6 +32,8 @@ def validate_client(data):
 
     if phone == "":
         errors["phone"] = "Por favor ingrese un teléfono"
+    elif phone[:2] != "54":
+        errors["phone"] = "El telefono debe comenzar con 54"
 
     if email == "":
         errors["email"] = "Por favor ingrese un email"
@@ -195,7 +213,7 @@ class Client(models.Model):
 
     @classmethod
     def save_client(cls, client_data):
-        """Save a new client to the database""" 
+        """Save a new client to the database"""
         errors = validate_client(client_data)
 
         if len(errors.keys()) > 0:
@@ -216,8 +234,13 @@ class Client(models.Model):
         self.email = client_data.get("email", "") or self.email
         self.phone = client_data.get("phone", "") or self.phone
         self.address = client_data.get("address", "") or self.address
+        errors = validate_client(object_to_querydict(self))
+
+        if len(errors.keys()) > 0:
+            return False, errors
 
         self.save()
+        return True, None
 
 
 class Pet(models.Model):

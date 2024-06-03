@@ -78,7 +78,7 @@ class ClientsRepoTestCase(PlaywrightTestCase):
         Client.objects.create(
             name="Juan Sebastián Veron",
             address="13 y 44",
-            phone="221555232",
+            phone="54221555232",
             email="brujita75@hotmail.com",
         )
 
@@ -95,7 +95,7 @@ class ClientsRepoTestCase(PlaywrightTestCase):
 
         expect(self.page.get_by_text("Juan Sebastián Veron")).to_be_visible()
         expect(self.page.get_by_text("13 y 44")).to_be_visible()
-        expect(self.page.get_by_text("221555232")).to_be_visible()
+        expect(self.page.get_by_text("54221555232")).to_be_visible()
         expect(self.page.get_by_text("brujita75@hotmail.com")).to_be_visible()
 
         expect(self.page.get_by_text("Guido Carrillo")).to_be_visible()
@@ -117,7 +117,7 @@ class ClientsRepoTestCase(PlaywrightTestCase):
         client = Client.objects.create(
             name="Juan Sebastián Veron",
             address="13 y 44",
-            phone="221555232",
+            phone="54221555232",
             email="brujita75@hotmail.com",
         )
 
@@ -133,7 +133,7 @@ class ClientsRepoTestCase(PlaywrightTestCase):
         client = Client.objects.create(
             name="Juan Sebastián Veron",
             address="13 y 44",
-            phone="221555232",
+            phone="54221555232",
             email="brujita75@hotmail.com",
         )
 
@@ -155,7 +155,7 @@ class ClientsRepoTestCase(PlaywrightTestCase):
         Client.objects.create(
             name="Juan Sebastián Veron",
             address="13 y 44",
-            phone="221555232",
+            phone="54221555232",
             email="brujita75@hotmail.com",
         )
 
@@ -179,20 +179,33 @@ class ClientsRepoTestCase(PlaywrightTestCase):
 class ClientCreateEditTestCase(PlaywrightTestCase):
     """Test case for clients creation and edition."""
 
+    def test_cant_update_to_invalid_phone(self):
+        client = Client.objects.create(
+            name="Juan Sebastián Veron",
+            address="13 y 44",
+            phone="54221555232",
+            email="brujita75@hotmail.com",
+        )
+        self.page.goto(f"{self.live_server_url}{reverse('clients_repo')}")
+        self.page.get_by_role("link", name="Editar").click()
+        self.page.get_by_label("Teléfono").fill("435345354")
+        self.page.get_by_role("button", name="Guardar").click()
+
+
     def test_should_be_able_to_create_a_new_client(self):
         self.page.goto(f"{self.live_server_url}{reverse('clients_form')}")
 
         expect(self.page.get_by_role("form")).to_be_visible()
 
         self.page.get_by_label("Nombre").fill("Juan Sebastián Veron")
-        self.page.get_by_label("Teléfono").fill("221555232")
+        self.page.get_by_label("Teléfono").fill("54221555232")
         self.page.get_by_label("Email").fill("brujita75@hotmail.com")
         self.page.get_by_label("Dirección").fill("13 y 44")
 
         self.page.get_by_role("button", name="Guardar").click()
 
         expect(self.page.get_by_text("Juan Sebastián Veron")).to_be_visible()
-        expect(self.page.get_by_text("221555232")).to_be_visible()
+        expect(self.page.get_by_text("54221555232")).to_be_visible()
         expect(self.page.get_by_text("brujita75@hotmail.com")).to_be_visible()
         expect(self.page.get_by_text("13 y 44")).to_be_visible()
 
@@ -208,7 +221,7 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
         expect(self.page.get_by_text("Por favor ingrese un email")).to_be_visible()
 
         self.page.get_by_label("Nombre").fill("Juan Sebastián Veron")
-        self.page.get_by_label("Teléfono").fill("221555232")
+        self.page.get_by_label("Teléfono").fill("54221555232")
         self.page.get_by_label("Email").fill("brujita75")
         self.page.get_by_label("Dirección").fill("13 y 44")
 
@@ -227,7 +240,7 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
         client = Client.objects.create(
             name="Juan Sebastián Veron",
             address="13 y 44",
-            phone="221555232",
+            phone="54221555232",
             email="brujita75@hotmail.com",
         )
 
@@ -235,7 +248,7 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
         self.page.goto(f"{self.live_server_url}{path}")
 
         self.page.get_by_label("Nombre").fill("Guido Carrillo")
-        self.page.get_by_label("Teléfono").fill("221232555")
+        self.page.get_by_label("Teléfono").fill("54221232555")
         self.page.get_by_label("Email").fill("goleador@gmail.com")
         self.page.get_by_label("Dirección").fill("1 y 57")
 
@@ -243,7 +256,7 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
 
         expect(self.page.get_by_text("Juan Sebastián Veron")).not_to_be_visible()
         expect(self.page.get_by_text("13 y 44")).not_to_be_visible()
-        expect(self.page.get_by_text("221555232")).not_to_be_visible()
+        expect(self.page.get_by_text("54221555232")).not_to_be_visible()
         expect(self.page.get_by_text("brujita75@hotmail.com")).not_to_be_visible()
 
         expect(self.page.get_by_text("Guido Carrillo")).to_be_visible()
@@ -455,7 +468,7 @@ class PetCreateEditTestCase(PlaywrightTestCase):
         Client.save_client(
             {
                 "name": "duenio 1",
-                "phone": "221555232",
+                "phone": "54221555232",
                 "address": "13 y 44",
                 "email": "email@hotmail.com",
             },

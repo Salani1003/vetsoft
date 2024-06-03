@@ -22,7 +22,7 @@ def clients_form(request, id=None):
 
     This function processes both the GET and POST requests for the client form.
     """
-    
+
     if request.method == "POST":
         client_id = request.POST.get("id", "")
         errors = {}
@@ -32,13 +32,15 @@ def clients_form(request, id=None):
             saved, errors = Client.save_client(request.POST)
         else:
             client = get_object_or_404(Client, pk=client_id)
-            client.update_client(request.POST)
+            saved, errors = client.update_client(request.POST)
 
         if saved:
             return redirect(reverse("clients_repo"))
 
         return render(
-            request, "clients/form.html", {"errors": errors, "client": request.POST},
+            request,
+            "clients/form.html",
+            {"errors": errors, "client": request.POST},
         )
 
     client = None
@@ -60,11 +62,13 @@ def clients_delete(request):
 
     return redirect(reverse("clients_repo"))
 
+
 def medicines_repository(request):
     """Renders the medicines repository page."""
 
     medicines = Medicine.objects.all()
     return render(request, "medicines/repository.html", {"medicines": medicines})
+
 
 def medicines_form(request, id=None):
     """
@@ -87,7 +91,9 @@ def medicines_form(request, id=None):
             return redirect(reverse("medicines_repo"))
 
         return render(
-            request, "medicines/form.html", {"errors": errors, "medicine": request.POST},
+            request,
+            "medicines/form.html",
+            {"errors": errors, "medicine": request.POST},
         )
 
     medicine = None
@@ -139,7 +145,9 @@ def pets_form(request, id=None):
             return redirect(reverse("pets_repo"))
 
         return render(
-            request, "pets/form.html", {"errors": errors, "pet": request.POST},
+            request,
+            "pets/form.html",
+            {"errors": errors, "pet": request.POST},
         )
     pet = None
     if id is not None:
@@ -188,7 +196,9 @@ def vets_form(request, id=None):
             return redirect(reverse("vets_repo"))
 
         return render(
-            request, "vets/form.html", {"errors": errors, "vet": request.POST},
+            request,
+            "vets/form.html",
+            {"errors": errors, "vet": request.POST},
         )
 
     vet = None
@@ -239,7 +249,9 @@ def providers_form(request, id=None):
             return redirect(reverse("providers_repo"))
 
         return render(
-            request, "providers/form.html", {"errors": errors, "provider": request.POST},
+            request,
+            "providers/form.html",
+            {"errors": errors, "provider": request.POST},
         )
 
     provider = None
@@ -290,7 +302,9 @@ def products_form(request, id=None):
             return redirect(reverse("products_repo"))
 
         return render(
-            request, "products/form.html", {"errors": errors, "product": request.POST},
+            request,
+            "products/form.html",
+            {"errors": errors, "product": request.POST},
         )
     product = None
     if id is not None:
@@ -310,11 +324,17 @@ def products_delete(request):
 
     return redirect(reverse("products_repo"))
 
+
 def appointments_repository(request):
     """Renders the appointments repository page."""
 
     appointments = Appointment.objects.all()
-    return render(request, "appointments/repository.html", {"appointments": appointments})
+    return render(
+        request,
+        "appointments/repository.html",
+        {"appointments": appointments},
+    )
+
 
 def appointments_form(request, id=None):
     """
@@ -339,12 +359,19 @@ def appointments_form(request, id=None):
             return redirect(reverse("appointments_repo"))
 
         return render(
-            request, "appointments/form.html", {"errors": errors, "appointment": request.POST},
+            request,
+            "appointments/form.html",
+            {"errors": errors, "appointment": request.POST},
         )
     appointment = None
     if id is not None:
         appointment = get_object_or_404(Appointment, pk=id)
-    return render(request, "appointments/form.html", {"appointment": appointment, "pets": pets, "vets": vets})
+    return render(
+        request,
+        "appointments/form.html",
+        {"appointment": appointment, "pets": pets, "vets": vets},
+    )
+
 
 def appointments_delete(request):
     """
@@ -357,4 +384,3 @@ def appointments_delete(request):
     appointment.delete()
 
     return redirect(reverse("appointments_repo"))
-
