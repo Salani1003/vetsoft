@@ -14,7 +14,7 @@ class ClientModelTest(TestCase):
                 "name": "Juan Sebastian Veron",
                 "phone": 54221555232,
                 "address": "13 y 44",
-                "email": "brujita75@hotmail.com",
+                "email": "brujita75@vetsoft.com",
             },
         )
         clients = Client.objects.all()
@@ -23,7 +23,7 @@ class ClientModelTest(TestCase):
         self.assertEqual(clients[0].name, "Juan Sebastian Veron")
         self.assertEqual(clients[0].phone, 54221555232)
         self.assertEqual(clients[0].address, "13 y 44")
-        self.assertEqual(clients[0].email, "brujita75@hotmail.com")
+        self.assertEqual(clients[0].email, "brujita75@vetsoft.com")
 
     def test_can_update_client(self):
         Client.save_client(
@@ -31,7 +31,7 @@ class ClientModelTest(TestCase):
                 "name": "Juan Sebastian Veron",
                 "phone": 54221555232,
                 "address": "13 y 44",
-                "email": "brujita75@hotmail.com",
+                "email": "brujita75@vetsoft.com",
             },
         )
         client = Client.objects.get(pk=1)
@@ -50,7 +50,7 @@ class ClientModelTest(TestCase):
                 "name": "Juan Sebastian Veron",
                 "phone": 54221555232,
                 "address": "13 y 44",
-                "email": "brujita75@hotmail.com",
+                "email": "brujita75@vetsoft.com",
             },
         )
         client = Client.objects.get(pk=1)
@@ -69,11 +69,24 @@ class ClientModelTest(TestCase):
                 "name": "Juan Sebastian Veron",
                 "phone": 221555233,
                 "address": "13 y 44",
-                "email": "brujita75@hotmail.com",
+                "email": "brujita75@vetsoft.com",
             }
         )
         self.assertFalse(saved)
         self.assertEqual(errors["phone"], "El teléfono debe comenzar con 54")
+
+    def test_email_must_have_vetsoft_domain(self):
+        saved, errors = Client.save_client(
+            {
+                "name": "Juan Sebastian Veron",
+                "phone": 54221555232,
+                "address": "13 y 44",
+                "email": "brujita75@yahoo.com"
+            }
+        )
+        self.assertFalse(saved)
+        self.assertEqual(errors["email"], "El email debe ser de dominio vetsoft.com")
+
 
 
 class MedicineModelTest(TestCase):
@@ -126,7 +139,7 @@ class PetModelTest(TestCase):
                 "name": "Juan Sebastian Veron",
                 "phone": "54221555232",
                 "address": "13 y 44",
-                "email": "brujita75@hotmail.com",
+                "email": "brujita75@vetsoft.com",
             },
         )
         _, errors = Pet.save_pet(
@@ -145,7 +158,7 @@ class PetModelTest(TestCase):
                 "name": "Juan Sebastian Veron",
                 "phone": "221555232",
                 "address": "13 y 44",
-                "email": "brujita75@hotmail.com",
+                "email": "brujita75@vetsoft.com",
             }
         )
         _, errors = Pet.save_pet(
@@ -164,7 +177,7 @@ class PetModelTest(TestCase):
                 "name": "Juan Sebastian Veron",
                 "phone": "54221555232",
                 "address": "13 y 44",
-                "email": "brujita75@hotmail.com",
+                "email": "brujita75@vetsoft.com",
             },
         )
         is_success, errors = Pet.save_pet(
