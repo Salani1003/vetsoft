@@ -383,7 +383,13 @@ class Product(models.Model):
         self.type = product_data.get("type", "") or self.type
         self.price = product_data.get("price", "") or self.price
 
+        errors = validate_product(object_to_querydict(self))
+
+        if len(errors.keys()) > 0:
+            return False, errors
+
         self.save()
+        return True, None
 
 
 class Appointment(models.Model):
