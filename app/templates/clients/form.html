@@ -59,6 +59,7 @@
                         name="email"
                         class="form-control"
                         value="{{ client.email }}"
+                        pattern=".+@vetsoft\.com$"
                         required/>
 
                     {% if errors.email %}
