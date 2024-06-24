@@ -39,7 +39,8 @@ def validate_client(data):
         errors["phone"] = "El teléfono debe comenzar con 54"
     if email == "":
         errors["email"] = "Por favor ingrese un email"
-    elif email.count("@") == 0:
+    #da error no tiene un @ o no hay nada antes del @
+    elif email.count("@") == 0 or email.split("@")[0] == "" or len(email.split("@")) > 2:
         errors["email"] = "Por favor ingrese un email valido"
     elif not email.endswith('@vetsoft.com'):
         errors["email"] = "El email debe ser de dominio vetsoft.com"
