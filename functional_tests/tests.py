@@ -175,6 +175,56 @@ class ClientsRepoTestCase(PlaywrightTestCase):
 
         expect(self.page.get_by_text("Juan Sebastián Veron")).not_to_be_visible()
 
+    def test_should_not_be_able_to_create_a_client_with_invalid_email(self):
+            self.page.goto(f"{self.live_server_url}{reverse('clients_form')}")
+
+            expect(self.page.get_by_role("form")).to_be_visible()
+
+            self.page.get_by_label("Nombre").fill("Juan Sebastián Veron")
+            self.page.get_by_label("Teléfono").fill("54221555232")
+            self.page.get_by_label("Email").fill("brujita75")
+            self.page.get_by_label("Dirección").fill("13 y 44")
+
+            self.page.get_by_role("button", name="Guardar").click()
+
+            expect(
+                self.page.get_by_text("Por favor ingrese un email valido"),
+            ).to_be_visible()
+
+            self.page.get_by_label("Email").fill("@vetsoft.com")
+
+            self.page.get_by_role("button", name="Guardar").click()
+
+            expect(
+                self.page.get_by_text("Por favor ingrese un email valido"),
+            ).to_be_visible()
+
+            self.page.get_by_label("Email").fill("a@a@vetsoft.com")
+
+            self.page.get_by_role("button", name="Guardar").click()
+
+            expect(
+                self.page.get_by_text("Por favor ingrese un email valido"),
+            ).to_be_visible()
+
+    def test_should_not_be_able_to_create_a_client_with_a_not_vetsoft_domain_email(self):
+        self.page.goto(f"{self.live_server_url}{reverse('clients_form')}")
+
+        expect(self.page.get_by_role("form")).to_be_visible()
+
+        self.page.get_by_label("Nombre").fill("Juan Sebastián Veron")
+        self.page.get_by_label("Teléfono").fill("54221555232")
+        self.page.get_by_label("Email").fill("brujita75@gmail.com")
+        self.page.get_by_label("Dirección").fill("13 y 44")
+
+        self.page.get_by_role("button", name="Guardar").click()
+
+        expect(
+            self.page.get_by_text("El email debe ser de dominio vetsoft.com"),
+        ).to_be_visible()
+
+
+
 
 class ClientCreateEditTestCase(PlaywrightTestCase):
     """Test case for clients creation and edition."""
