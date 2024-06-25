@@ -242,7 +242,6 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
         self.page.get_by_role("button", name="Guardar").click()
         expect(self.page.get_by_label("form")).to_contain_text("El teléfono debe comenzar con 54")
 
-
     def test_should_be_able_to_create_a_new_client(self):
         self.page.goto(f"{self.live_server_url}{reverse('clients_form')}")
 
