@@ -19,6 +19,12 @@ def object_to_querydict(obj):
                 querydict.appendlist(attr, str(value))
     return querydict
 
+def can_be_integer(value):
+    try:
+        int(value)
+        return True
+    except ValueError:
+        return False
 
 def validate_client(data):
     """Validates the clients data."""
@@ -37,8 +43,8 @@ def validate_client(data):
         errors["phone"] = "Por favor ingrese un teléfono"
     elif not str(phone).startswith("54"):
         errors["phone"] = "El teléfono debe comenzar con 54"
-    elif not isinstance(phone, int):
-        errors["phone"] = "El teléfono solo puede contener números"
+    elif not can_be_integer(phone):
+        errors["phone"] = "El teléfono debe ser un número" 
     if email == "":
         errors["email"] = "Por favor ingrese un email"
     elif email.count("@") == 0 or email.split("@")[0] == "" or len(email.split("@")) > 2:

@@ -97,7 +97,7 @@ class ClientModelTest(TestCase):
             }
         )
         self.assertFalse(saved)
-        self.assertEqual(errors["phone"], "El teléfono solo puede contener números")
+        self.assertEqual(errors["phone"], "El teléfono debe ser un número")
         
 
 
