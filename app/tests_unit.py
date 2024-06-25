@@ -200,7 +200,6 @@ class PetModelTest(TestCase):
                 "client": 1,
             },
         )
-        print(errors)
         self.assertTrue(is_success)
 
 
