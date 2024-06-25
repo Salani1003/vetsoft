@@ -20,6 +20,7 @@ def object_to_querydict(obj):
     return querydict
 
 def can_be_integer(value):
+    """Checks if a value can be converted to an integer."""
     try:
         int(value)
         return True
