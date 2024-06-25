@@ -135,12 +135,12 @@ class ClientsTest(TestCase):
             reverse("clients_form"),
             data={
                 "name": "Juan Sebastian Veron",
-                "phone":"",
+                "phone":"jjj",
                 "address": "13 y 44",
                 "email": "brujita75@vetsoft.com"
             },
         )
-        self.assertContains(response, "Por favor ingrese un teléfono")
+        self.assertContains(response, "El teléfono solo puede contener números")
         
 
 class MedicineTest(TestCase):

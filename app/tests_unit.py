@@ -91,13 +91,13 @@ class ClientModelTest(TestCase):
         saved, errors = Client.save_client(
             {
                 "name": "Juan Sebastian Veron",
-                "phone": "",
+                "phone": "54aaa",
                 "address": "13 y 44",
                 "email": "brujita75@vetsoft.com",
             }
         )
         self.assertFalse(saved)
-        self.assertEqual(errors["phone"], "Por favor ingrese un teléfono")
+        self.assertEqual(errors["phone"], "El teléfono solo puede contener números")
         
 
 

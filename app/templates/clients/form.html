@@ -44,8 +44,6 @@
                         class="form-control"
                         value="{{client.phone}}"
                         pattern="^54\d+$"
-                        step="1"
-                        oninput="this.value = this.value.replace(/[^\d]/g, '')"
                         required
                     />
                     {% if errors.phone %}
