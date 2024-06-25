@@ -241,7 +241,6 @@ class ClientCreateEditTestCase(PlaywrightTestCase):
         self.page.get_by_label("Teléfono").fill("435345354")
         self.page.get_by_role("button", name="Guardar").click()
 
-
     def test_should_be_able_to_create_a_new_client(self):
         self.page.goto(f"{self.live_server_url}{reverse('clients_form')}")
 

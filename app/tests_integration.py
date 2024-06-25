@@ -129,6 +129,19 @@ class ClientsTest(TestCase):
         )
 
         self.assertContains(response, "El email debe ser de dominio vetsoft.com")
+    
+    def test_phone_validation(self):
+        response = self.client.post(
+            reverse("clients_form"),
+            data={
+                "name": "Juan Sebastian Veron",
+                "phone":"",
+                "address": "13 y 44",
+                "email": "brujita75@vetsoft.com"
+            },
+        )
+        self.assertContains(response, "Por favor ingrese un teléfono")
+        
 
 class MedicineTest(TestCase):
     """Test the medicines model integration"""

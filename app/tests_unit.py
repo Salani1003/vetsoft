@@ -86,6 +86,20 @@ class ClientModelTest(TestCase):
         )
         self.assertFalse(saved)
         self.assertEqual(errors["phone"], "El teléfono debe comenzar con 54")
+        
+    def test_phone_must_be_only_numbers(self):
+        saved, errors = Client.save_client(
+            {
+                "name": "Juan Sebastian Veron",
+                "phone": "",
+                "address": "13 y 44",
+                "email": "brujita75@vetsoft.com",
+            }
+        )
+        self.assertFalse(saved)
+        self.assertEqual(errors["phone"], "Por favor ingrese un teléfono")
+        
+
 
     def test_email_must_have_vetsoft_domain(self):
         saved, errors = Client.save_client(
