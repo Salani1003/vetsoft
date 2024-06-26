@@ -218,11 +218,26 @@ class ClientsRepoTestCase(PlaywrightTestCase):
         self.page.get_by_label("Dirección").fill("13 y 44")
 
         self.page.get_by_role("button", name="Guardar").click()
-
         expect(
             self.page.get_by_text("El email debe ser de dominio vetsoft.com"),
         ).to_be_visible()
 
+
+    def test_should_not_be_able_to_create_a_client_with_invalid_name(self):
+        self.page.goto(f"{self.live_server_url}{reverse('clients_form')}")
+
+        expect(self.page.get_by_role("form")).to_be_visible()
+
+        # Intentar con un nombre que contiene números
+        self.page.get_by_label("Nombre").fill("Juan Sebastián Verón123")
+        self.page.get_by_label("Teléfono").fill("54221555232")
+        self.page.get_by_label("Email").fill("brujita75@vetsoft.com")
+        self.page.get_by_label("Dirección").fill("13 y 44")
+
+        self.page.get_by_role("button", name="Guardar").click()
+        expect(
+            self.page.get_by_text("El nombre solo puede contener letras y espacios"),
+        ).to_be_visible()
 
 
 
